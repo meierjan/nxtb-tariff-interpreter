@@ -9,12 +9,14 @@ sealed class Tariff {
     abstract val id: TariffId
     abstract val freeSeconds: Int
     abstract val rates: Set<Rate>
+    abstract val billingInterval: Interval?
 }
 
 data class SlotBasedTariff(
     override val id: TariffId,
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
+    override val billingInterval: Interval?,
     val slots: List<Slot>
 ) : Tariff() {
     data class Slot(
@@ -28,6 +30,7 @@ data class TimeBasedTariff(
     override val id: TariffId,
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
+    override val billingInterval: Interval?,
     val timeSlots: List<TimeSlot>
 ) : Tariff() {
     data class TimeSlot(
