@@ -10,10 +10,10 @@ class TariffCalculator(
     private val timeBasedTariffCalculator: TimeBasedTariffCalculator = TimeBasedTariffCalculator()
 ) {
 
-    fun calculate(tariff: Tariff, start: Date, end: Date): Receipt =
+    fun calculate(tariff: Tariff, rentalStart: Date, rentalEnd: Date): Receipt =
         when (tariff) {
-            is SlotBasedTariff -> slotBasedTariffCalculator.calculate(tariff, start, end)
-            is TimeBasedTariff -> timeBasedTariffCalculator.calculate(tariff, start, end)
+            is SlotBasedTariff -> slotBasedTariffCalculator.calculate(tariff, rentalStart, rentalEnd)
+            is TimeBasedTariff -> timeBasedTariffCalculator.calculate(tariff, rentalStart, rentalEnd)
         }
 
 }

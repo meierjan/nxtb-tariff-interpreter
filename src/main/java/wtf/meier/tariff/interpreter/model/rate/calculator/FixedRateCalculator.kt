@@ -5,7 +5,7 @@ import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import java.util.*
 
 class FixedRateCalculator {
-    fun calculate(rate: FixedRate, start: Date, end: Date): Price {
-        return rate.price
-    }
+    fun calculate(rate: FixedRate, rentalStart: Date, rentalEnd: Date): Price =
+        rate.price
+    
 }

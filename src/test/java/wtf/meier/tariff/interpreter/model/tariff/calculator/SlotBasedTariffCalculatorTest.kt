@@ -11,6 +11,7 @@ import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.HOURS
 
 class SlotBasedTariffCalculatorTest {
 
@@ -35,24 +36,19 @@ class SlotBasedTariffCalculatorTest {
             FixedRate(
                 id = RateId(1),
                 currency = Currency.getInstance("EUR"),
-                Price(2000)
+                price = Price(2000)
             ),
             FixedRate(
                 id = RateId(2),
                 currency = Currency.getInstance("EUR"),
-                Price(2000)
+                price = Price(2000)
             )
         ),
         slots = setOf(
             SlotBasedTariff.Slot(
                 start = Interval(0, TimeUnit.SECONDS),
-                end = Interval(2, TimeUnit.HOURS),
-                RateId(1)
-            ),
-            SlotBasedTariff.Slot(
-                start = Interval(2, TimeUnit.HOURS),
-                end = null,
-                RateId(1)
+                end = Interval(2, HOURS),
+                rate = RateId(1)
             )
         ),
         billingInterval = Interval(1, TimeUnit.DAYS)
@@ -63,11 +59,10 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            start = Date(0),
-            end = Date(TimeUnit.HOURS.toMillis(1))
+            rentalStart = Date(0),
+            rentalEnd = Date(HOURS.toMillis(1))
         )
 
-        println(receipt.price)
         assert(receipt.price == 2000)
     }
 
@@ -76,11 +71,10 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            start = Date(0),
-            end = Date(TimeUnit.HOURS.toMillis(2))
+            rentalStart = Date(0),
+            rentalEnd = Date(HOURS.toMillis(2))
         )
 
-        println(receipt.price)
         assert(receipt.price == 2000)
     }
 
@@ -89,11 +83,10 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            start = Date(0),
-            end = Date(TimeUnit.HOURS.toMillis(4))
+            rentalStart = Date(0),
+            rentalEnd = Date(HOURS.toMillis(4))
         )
 
-        println(receipt.price)
         assert(receipt.price == 4000)
     }
 
@@ -102,11 +95,10 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            start = Date(0),
-            end = Date(TimeUnit.HOURS.toMillis(10))
+            rentalStart = Date(0),
+            rentalEnd = Date(HOURS.toMillis(10))
         )
 
-        println(receipt.price)
         assert(receipt.price == 4000)
     }
 }

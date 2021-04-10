@@ -10,9 +10,9 @@ class RateCalculator(
     private val fixedRateCalculator: FixedRateCalculator = FixedRateCalculator()
 ) {
 
-    fun calculate(rate: Rate, start: Date, end: Date): Price =
+    fun calculate(rate: Rate, rentalStart: Date, rentalEnd: Date): Price =
         when (rate) {
-            is TimeBasedRate -> timeBaseRateCalculator.calculate(rate, start, end)
-            is FixedRate -> fixedRateCalculator.calculate(rate, start, end)
+            is TimeBasedRate -> timeBaseRateCalculator.calculate(rate, rentalStart, rentalEnd)
+            is FixedRate -> fixedRateCalculator.calculate(rate, rentalStart, rentalEnd)
         }
 }

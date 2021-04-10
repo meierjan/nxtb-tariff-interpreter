@@ -8,7 +8,7 @@ import java.util.*
 class TimeBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
 ) {
-    fun calculate(tariff: TimeBasedTariff, start: Date, end: Date): Receipt {
+    fun calculate(tariff: TimeBasedTariff, rentalStart: Date, rentalEnd: Date): Receipt {
         TODO(" not yet implemented")
     }
 }

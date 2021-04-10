@@ -1,6 +1,6 @@
 package wtf.meier.tariff.interpreter.model.rate.calculator
 
-import wtf.meier.tariff.interpreter.extension.toMillis
+import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.extension.max
 import wtf.meier.tariff.interpreter.model.extension.min
@@ -11,9 +11,9 @@ import java.util.*
 import kotlin.math.ceil
 
 class TimeBaseRateCalculator {
-    fun calculate(rate: TimeBasedRate, start: Date, end: Date): Price {
-        val intervalLength = rate.interval.toMillis()
-        val durationInMillis = end.time - start.time
+    fun calculate(rate: TimeBasedRate, rentalStart: Date, rentalEnd: Date): Price {
+        val intervalLength = rate.interval.durationMillis()
+        val durationInMillis = rentalEnd.time - rentalStart.time
 
         // round up so we are also counting started intervals as full
         val intervals = ceil(durationInMillis / intervalLength.toFloat()).toLong()

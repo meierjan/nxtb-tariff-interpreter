@@ -1,6 +1,6 @@
 package wtf.meier.tariff.interpreter.model.tariff
 
-import wtf.meier.tariff.interpreter.extension.toMillis
+import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
@@ -37,7 +37,7 @@ data class SlotBasedTariff(
         fun matches(start: Date, end: Date): Boolean {
             val duration = end.time - start.time
 
-            val t1 = this.start.toMillis()
+            val t1 = this.start.durationMillis()
 
             return t1 <= duration
         }
