@@ -16,8 +16,7 @@ data class Receipt(
 
 class TariffCalculator : Calculator {
 
-    override fun calculate(tariff: Tariff, start: Date, end: Date): Receipt {
-        return tariff.calculate(start, end)
-    }
+    override fun calculate(tariff: Tariff, start: Date, end: Date): Receipt =
+         tariff.calculate(start, end)
 
 }

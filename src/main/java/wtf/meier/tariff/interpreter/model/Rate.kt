@@ -7,8 +7,11 @@ import java.util.concurrent.TimeUnit
 inline class RateId(val id: Long)
 
 sealed class Rate {
+
     abstract val id: RateId
     abstract val currency: Currency
+
+    abstract fun calculate(start: Date, end: Date): Price
 }
 
 data class Price(
@@ -18,7 +21,9 @@ data class Price(
 data class Interval(
     val timeAmount: Int,
     val timeUnit: TimeUnit
-)
+) {
+    fun toMillis() : Long = timeUnit.toMillis(timeAmount.toLong())
+}
 
 
 data class TimeBasedRate(
@@ -29,10 +34,18 @@ data class TimeBasedRate(
     val pricePerInterval: Price,
     val maxPrice: Price,
     val minPrice: Price
-) : Rate()
+) : Rate() {
+    override fun calculate(start: Date, end: Date): Price {
+        TODO("Not yet implemented")
+    }
+}
 
 data class FixedRate(
     override val id: RateId,
     override val currency: Currency,
     val price: Price
-) : Rate()
+) : Rate() {
+    override fun calculate(start: Date, end: Date): Price =
+        price
+
+}
