@@ -1,18 +1,29 @@
-package wtf.meier.tariff.interpreter.model
+package wtf.meier.tariff.interpreter.model.rate.calculator
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wtf.meier.tariff.interpreter.model.Interval
+import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.model.rate.RateId
+import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
 import java.util.*
-import java.util.concurrent.TimeUnit.HOURS
-import java.util.concurrent.TimeUnit.MINUTES
+import java.util.concurrent.TimeUnit
 
-internal class TimeBasedRateTest {
+class TimeBaseRateCalculatorTest {
 
-    val rate1 = TimeBasedRate(
+    lateinit var calculator: TimeBaseRateCalculator
+
+    @BeforeEach
+    fun setup() {
+        calculator = TimeBaseRateCalculator()
+    }
+
+    private val rate1 = TimeBasedRate(
         id = RateId(1),
         currency = Currency.getInstance("EUR"),
         interval = Interval(
             timeAmount = 30,
-            timeUnit = MINUTES
+            timeUnit = TimeUnit.MINUTES
         ),
         basePrice = Price(50),
         pricePerInterval = Price(200),
@@ -25,7 +36,7 @@ internal class TimeBasedRateTest {
         val start = Date(0)
         val end = Date(0)
 
-        val price = rate1.calculate(start, end)
+        val price = calculator.calculate(rate1, start, end)
 
         // 0 seconds = base_price
         assert(price.credit == 50L)
@@ -35,9 +46,9 @@ internal class TimeBasedRateTest {
     @Test
     fun `Test calculation for rate1 for 30 minutes`() {
         val start = Date(0)
-        val end = Date(MINUTES.toMillis(30))
+        val end = Date(TimeUnit.MINUTES.toMillis(30))
 
-        val price = rate1.calculate(start, end)
+        val price = calculator.calculate(rate1, start, end)
 
         // seconds + 1 * interval
         assert(price.credit == 250L)
@@ -46,9 +57,9 @@ internal class TimeBasedRateTest {
     @Test
     fun `Test calculation for rate1 for 120 minutes`() {
         val start = Date(0)
-        val end = Date(MINUTES.toMillis(120))
+        val end = Date(TimeUnit.MINUTES.toMillis(120))
 
-        val price = rate1.calculate(start, end)
+        val price = calculator.calculate(rate1, start, end)
 
         // base_price (50) + 4 * interval (200)
         assert(price.credit == 850L)
@@ -57,13 +68,12 @@ internal class TimeBasedRateTest {
     @Test
     fun `Test calculation for rate1 for 5 hours`() {
         val start = Date(0)
-        val end = Date(HOURS.toMillis(5))
+        val end = Date(TimeUnit.HOURS.toMillis(5))
 
-        val price = rate1.calculate(start, end)
+        val price = calculator.calculate(rate1, start, end)
 
         // base (50) + 10 * interval (200) > 1000 -> max_price
         assert(price.credit == 1000L)
     }
-
 
 }
