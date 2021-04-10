@@ -1,6 +1,8 @@
 package wtf.meier.tariff.interpreter.model
 
+import wtf.meier.tariff.interpreter.Receipt
 import java.time.DayOfWeek
+import java.util.*
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 inline class TariffId(val id: Long)
@@ -10,6 +12,9 @@ sealed class Tariff {
     abstract val freeSeconds: Int
     abstract val rates: Set<Rate>
     abstract val billingInterval: Interval?
+
+    abstract fun calculate(start: Date, end: Date) : Receipt
+
 }
 
 data class SlotBasedTariff(
@@ -17,13 +22,17 @@ data class SlotBasedTariff(
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
-    val slots: List<Slot>
+    val slots: Set<Slot>
 ) : Tariff() {
     data class Slot(
         val start: Interval,
-        val end: Interval,
+        val end: Interval?,
         val rate: RateId
     )
+
+    override fun calculate(start: Date, end: Date): Receipt {
+        TODO("Not yet implemented")
+    }
 }
 
 data class TimeBasedTariff(
@@ -46,5 +55,9 @@ data class TimeBasedTariff(
             val hour: Short,
             val minutes: Short
         )
+    }
+
+    override fun calculate(start: Date, end: Date): Receipt {
+        TODO("Not yet implemented")
     }
 }
