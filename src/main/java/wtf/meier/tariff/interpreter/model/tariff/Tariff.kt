@@ -4,9 +4,9 @@ import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
+import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff.TimeSpan
 import java.time.DayOfWeek
 import java.util.*
-
 
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -68,3 +68,11 @@ data class TimeBasedTariff(
     }
 
 }
+
+data class DayBasedTariff(
+    override val id: TariffId,
+    override val freeSeconds: Int,
+    override val rates: Set<Rate>,
+    override val billingInterval: Interval?,
+    val timeZone: TimeZone
+): Tariff()
