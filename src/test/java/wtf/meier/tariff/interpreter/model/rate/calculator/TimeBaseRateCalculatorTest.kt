@@ -6,6 +6,7 @@ import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -33,8 +34,8 @@ class TimeBaseRateCalculatorTest {
 
     @Test
     fun `Test calculation for rate1 for 0 minutes`() {
-        val start = Date(0)
-        val end = Date(0)
+        val start = Instant.ofEpochMilli(0)
+        val end = Instant.ofEpochMilli(0)
 
         val price = calculator.calculate(rate1, start, end)
 
@@ -45,8 +46,8 @@ class TimeBaseRateCalculatorTest {
 
     @Test
     fun `Test calculation for rate1 for 30 minutes`() {
-        val start = Date(0)
-        val end = Date(TimeUnit.MINUTES.toMillis(30))
+        val start = Instant.ofEpochMilli(0)
+        val end = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(30))
 
         val price = calculator.calculate(rate1, start, end)
 
@@ -56,8 +57,8 @@ class TimeBaseRateCalculatorTest {
 
     @Test
     fun `Test calculation for rate1 for 120 minutes`() {
-        val start = Date(0)
-        val end = Date(TimeUnit.MINUTES.toMillis(120))
+        val start = Instant.ofEpochMilli(0)
+        val end = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(120))
 
         val price = calculator.calculate(rate1, start, end)
 
@@ -67,8 +68,8 @@ class TimeBaseRateCalculatorTest {
 
     @Test
     fun `Test calculation for rate1 for 5 hours`() {
-        val start = Date(0)
-        val end = Date(TimeUnit.HOURS.toMillis(5))
+        val start = Instant.ofEpochMilli(0)
+        val end = Instant.ofEpochMilli(TimeUnit.HOURS.toMillis(5))
 
         val price = calculator.calculate(rate1, start, end)
 

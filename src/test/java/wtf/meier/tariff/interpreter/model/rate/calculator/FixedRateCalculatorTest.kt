@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateId
+import java.time.Instant
 import java.util.*
 
 internal class FixedRateCalculatorTest {
@@ -25,7 +26,7 @@ internal class FixedRateCalculatorTest {
             price = Price(1000)
         )
 
-        val price = fixedRateCalculator.calculate(rate, Date(), Date(1337))
+        val price = fixedRateCalculator.calculate(rate, Instant.ofEpochMilli(0), Instant.ofEpochMilli(1337))
 
         assert(price.credit == 1000L)
     }

@@ -4,8 +4,8 @@ import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
-import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff.TimeSpan
 import java.time.DayOfWeek
+import java.time.Instant
 import java.util.*
 
 
@@ -34,8 +34,8 @@ data class SlotBasedTariff(
         val end: Interval?,
         val rate: RateId
     ) {
-        fun matches(start: Date, end: Date): Boolean {
-            val duration = end.time - start.time
+        fun matches(start: Instant, end: Instant): Boolean {
+            val duration = end.epochSecond - start.epochSecond
 
             val t1 = this.start.durationMillis()
 
@@ -75,4 +75,4 @@ data class DayBasedTariff(
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
     val timeZone: TimeZone
-): Tariff()
+) : Tariff()

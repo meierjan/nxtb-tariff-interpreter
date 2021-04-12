@@ -8,6 +8,7 @@ import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.tariff.DayBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
+import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -15,7 +16,6 @@ import java.util.concurrent.TimeUnit
 internal class DayBasedTariffCalculatorTest {
 
     private lateinit var calculator: DayBasedTariffCalculator
-    private lateinit var calendar: GregorianCalendar
 
     private val tariff = DayBasedTariff(
         id = TariffId(1),
@@ -36,22 +36,21 @@ internal class DayBasedTariffCalculatorTest {
     @BeforeEach
     fun setup() {
         calculator = DayBasedTariffCalculator()
-        calendar = GregorianCalendar()
     }
 
 
     @Test
     fun calculate() {
 
-        calendar.timeZone = tariff.timeZone
+        val startInstant = LocalDateTime.of(1988, 7, 29, 0, 10)
+            .atZone(tariff.timeZone.toZoneId())
+            .toInstant()
 
-        calendar.set(1988, 7, 29, 0, 10)
-        val startDate = calendar.time
+        val startEnd = LocalDateTime.of(1988, 7, 30, 13, 40)
+            .atZone(tariff.timeZone.toZoneId())
+            .toInstant()
 
-        calendar.set(1988, 7, 30, 13, 40)
-        val startEnd = calendar.time
-
-        val receipt = calculator.calculate(tariff, startDate, startEnd)
+        val receipt = calculator.calculate(tariff, startInstant, startEnd)
 
         // 2 started days
         print(receipt.price)

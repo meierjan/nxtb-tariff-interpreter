@@ -4,7 +4,7 @@ import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.tariff.calculator.DayBasedTariffCalculator
 import wtf.meier.tariff.interpreter.model.tariff.calculator.SlotBasedTariffCalculator
 import wtf.meier.tariff.interpreter.model.tariff.calculator.TimeBasedTariffCalculator
-import java.util.*
+import java.time.Instant
 
 class TariffCalculator(
     private val slotBasedTariffCalculator: SlotBasedTariffCalculator = SlotBasedTariffCalculator(),
@@ -12,7 +12,7 @@ class TariffCalculator(
     private val dayBasedTariffCalculator: DayBasedTariffCalculator = DayBasedTariffCalculator()
 ) {
 
-    fun calculate(tariff: Tariff, rentalStart: Date, rentalEnd: Date): Receipt =
+    fun calculate(tariff: Tariff, rentalStart: Instant, rentalEnd: Instant): Receipt =
         when (tariff) {
             is SlotBasedTariff -> slotBasedTariffCalculator.calculate(tariff, rentalStart, rentalEnd)
             is TimeBasedTariff -> timeBasedTariffCalculator.calculate(tariff, rentalStart, rentalEnd)

@@ -4,6 +4,7 @@ import wtf.meier.tariff.interpreter.extension.min
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.DayBasedTariff
+import java.time.Instant
 import java.time.LocalTime.MAX
 import java.time.LocalTime.MIN
 import java.util.*
@@ -12,27 +13,27 @@ class DayBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
 ) {
 
-    fun calculate(tariff: DayBasedTariff, rentalStart: Date, rentalEnd: Date): Receipt {
+    fun calculate(tariff: DayBasedTariff, rentalStart: Instant, rentalEnd: Instant): Receipt {
 
         val timeZoneId = tariff.timeZone.toZoneId()
 
-        val startLocalDate = rentalStart.toInstant().atZone(timeZoneId)
-        val endLocalDate = rentalEnd.toInstant().atZone(timeZoneId)
+        val startLocalInstant = rentalStart.atZone(timeZoneId)
+        val endLocalInstant = rentalEnd.atZone(timeZoneId)
 
 
         var finalPrice = 0L
-        var currentDay = startLocalDate
-        while (currentDay.isBefore(endLocalDate)) {
+        var currentDay = startLocalInstant
+        while (currentDay.isBefore(endLocalInstant)) {
 
             val relativeStart = currentDay.with(MIN)
-            val relativeEnd = min(currentDay.with(MAX), endLocalDate)
+            val relativeEnd = min(currentDay.with(MAX), endLocalInstant)
 
 
-            val startDate = Date(relativeStart.toInstant().epochSecond)
-            val endDate = Date(relativeEnd.toInstant().epochSecond)
+            val startInstant = relativeStart.toInstant()
+            val endInstant = relativeEnd.toInstant()
 
             tariff.rates.forEach {
-                val price = rateCalculator.calculate(it, startDate, endDate).credit
+                val price = rateCalculator.calculate(it, startInstant, endInstant).credit
                 finalPrice += price
             }
 

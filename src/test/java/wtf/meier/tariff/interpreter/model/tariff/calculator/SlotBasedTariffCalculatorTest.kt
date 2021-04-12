@@ -9,6 +9,7 @@ import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.HOURS
@@ -59,8 +60,8 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            rentalStart = Date(0),
-            rentalEnd = Date(HOURS.toMillis(1))
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(1))
         )
 
         assert(receipt.price == 2000)
@@ -71,8 +72,8 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            rentalStart = Date(0),
-            rentalEnd = Date(HOURS.toMillis(2))
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(2))
         )
 
         assert(receipt.price == 2000)
@@ -83,8 +84,8 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            rentalStart = Date(0),
-            rentalEnd = Date(HOURS.toMillis(4))
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(4))
         )
 
         assert(receipt.price == 4000)
@@ -95,8 +96,8 @@ class SlotBasedTariffCalculatorTest {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
-            rentalStart = Date(0),
-            rentalEnd = Date(HOURS.toMillis(10))
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(10))
         )
 
         assert(receipt.price == 4000)

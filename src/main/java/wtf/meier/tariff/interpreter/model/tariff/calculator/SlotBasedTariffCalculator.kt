@@ -8,13 +8,14 @@ import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.InvalidTariffFormatException
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
+import java.time.Instant
 import java.util.*
 
 class SlotBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
 ) {
 
-    fun calculate(tariff: SlotBasedTariff, rentalStart: Date, rentalEnd: Date): Receipt {
+    fun calculate(tariff: SlotBasedTariff, rentalStart: Instant, rentalEnd: Instant): Receipt {
         // order edf
         val sortedSlots = tariff.slots.sortedBy { it.end?.durationMillis() ?: Long.MAX_VALUE }
         val rateMap = tariff.rates.associateBy { it.id }
