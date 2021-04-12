@@ -7,6 +7,7 @@ import wtf.meier.tariff.interpreter.model.rate.RateId
 import java.time.DayOfWeek
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -35,9 +36,11 @@ data class SlotBasedTariff(
         val rate: RateId
     ) {
         fun matches(start: Instant, end: Instant): Boolean {
-            val duration = end.epochSecond - start.epochSecond
+            val duration = end.toEpochMilli() - start.toEpochMilli()
 
-            val t1 = this.start.durationMillis()
+            // we want to exclude users that are riding exactly the amount of where the interval starts
+            // so we start counting at interval + 1 ms
+            val t1 = this.start.durationMillis() + 1
 
             return t1 <= duration
         }

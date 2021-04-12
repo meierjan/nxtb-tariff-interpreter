@@ -38,11 +38,6 @@ class SlotBasedTariffCalculatorTest {
                 id = RateId(1),
                 currency = Currency.getInstance("EUR"),
                 price = Price(2000)
-            ),
-            FixedRate(
-                id = RateId(2),
-                currency = Currency.getInstance("EUR"),
-                price = Price(2000)
             )
         ),
         slots = setOf(
@@ -50,6 +45,11 @@ class SlotBasedTariffCalculatorTest {
                 start = Interval(0, TimeUnit.SECONDS),
                 end = Interval(2, HOURS),
                 rate = RateId(1)
+            ),
+            SlotBasedTariff.Slot(
+                start = Interval(2, TimeUnit.HOURS),
+                end = null,
+                RateId(1)
             )
         ),
         billingInterval = Interval(1, TimeUnit.DAYS)
@@ -68,7 +68,7 @@ class SlotBasedTariffCalculatorTest {
     }
 
     @Test
-    fun `slotBasedFixedRate1 for exactly 2 hours`() {
+    fun `slotBasedFixedRate1 for exactly 2 - 1 milli hours`() {
 
         val receipt = calculator.calculate(
             tariff = slotBasedFixedRate1,
@@ -88,6 +88,7 @@ class SlotBasedTariffCalculatorTest {
             rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(4))
         )
 
+        println(receipt.price)
         assert(receipt.price == 4000)
     }
 
