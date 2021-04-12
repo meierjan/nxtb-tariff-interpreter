@@ -53,7 +53,7 @@ internal class DayBasedTariffCalculatorTest {
         val receipt = calculator.calculate(tariff, startInstant, startEnd)
 
         // 2 started days
-        print(receipt.price)
+
         assert(receipt.price == 4000)
 
 

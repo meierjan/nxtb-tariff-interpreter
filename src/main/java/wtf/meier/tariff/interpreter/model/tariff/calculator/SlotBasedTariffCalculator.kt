@@ -1,15 +1,14 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.min
 import wtf.meier.tariff.interpreter.extension.plus
-import wtf.meier.tariff.interpreter.extension.durationMillis
-import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.Receipt
+import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.InvalidTariffFormatException
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import java.time.Instant
-import java.util.*
 
 class SlotBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
@@ -20,7 +19,7 @@ class SlotBasedTariffCalculator(
         val sortedSlots = tariff.slots.sortedBy { it.end?.durationMillis() ?: Long.MAX_VALUE }
         val rateMap = tariff.rates.associateBy { it.id }
 
-        val finalPrice = mutableListOf<Price>()
+        val positions = mutableListOf<RateCalculator.CalculatedPrice>()
 
         for (slot in sortedSlots) {
             if (slot.matches(rentalStart, rentalEnd)) {
@@ -35,13 +34,10 @@ class SlotBasedTariffCalculator(
                     min(slotStart + slot.end, rentalEnd)
                 }
 
-                finalPrice.add(rateCalculator.calculate(rate, slotStart, slotEnd))
+                positions.add(rateCalculator.calculate(rate, slotStart, slotEnd))
             }
         }
 
-        return Receipt(
-            finalPrice.sumOf { it.credit }.toInt(),
-            currency = Currency.getInstance("EUR")
-        )
+        return positions.toReceipt()
     }
 }

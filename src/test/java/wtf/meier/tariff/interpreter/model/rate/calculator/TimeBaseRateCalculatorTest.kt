@@ -37,10 +37,10 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(0)
 
-        val price = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, start, end)
 
         // 0 seconds = base_price
-        assert(price.credit == 50L)
+        assert(receipt.price.credit == 50)
     }
 
 
@@ -49,10 +49,10 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(30))
 
-        val price = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, start, end)
 
         // seconds + 1 * interval
-        assert(price.credit == 250L)
+        assert(receipt.price.credit == 250)
     }
 
     @Test
@@ -60,10 +60,10 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(120))
 
-        val price = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, start, end)
 
         // base_price (50) + 4 * interval (200)
-        assert(price.credit == 850L)
+        assert(receipt.price.credit == 850)
     }
 
     @Test
@@ -71,10 +71,10 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(TimeUnit.HOURS.toMillis(5))
 
-        val price = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, start, end)
 
         // base (50) + 10 * interval (200) > 1000 -> max_price
-        assert(price.credit == 1000L)
+        assert(receipt.price.credit == 1000)
     }
 
 }
