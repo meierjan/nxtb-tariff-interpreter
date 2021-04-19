@@ -28,7 +28,7 @@ internal class FixedRateCalculatorTest {
 
         val price = fixedRateCalculator.calculate(rate, Instant.ofEpochMilli(0), Instant.ofEpochMilli(1337))
 
-        assert(price.credit == 1000L)
+        assert(price.price.credit == 1000)
     }
 
 }

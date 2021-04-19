@@ -2,12 +2,12 @@ package wtf.meier.tariff.interpreter.model.tariff.calculator
 
 import wtf.meier.tariff.interpreter.extension.min
 import wtf.meier.tariff.interpreter.model.Receipt
+import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.DayBasedTariff
 import java.time.Instant
 import java.time.LocalTime.MAX
 import java.time.LocalTime.MIN
-import java.util.*
 
 class DayBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
@@ -21,7 +21,7 @@ class DayBasedTariffCalculator(
         val endLocalInstant = rentalEnd.atZone(timeZoneId)
 
 
-        var finalPrice = 0L
+        val positions = mutableListOf<RateCalculator.CalculatedPrice>()
         var currentDay = startLocalInstant
         while (currentDay.isBefore(endLocalInstant)) {
 
@@ -33,8 +33,8 @@ class DayBasedTariffCalculator(
             val endInstant = relativeEnd.toInstant()
 
             tariff.rates.forEach {
-                val price = rateCalculator.calculate(it, startInstant, endInstant).credit
-                finalPrice += price
+                val position = rateCalculator.calculate(it, startInstant, endInstant)
+                positions.add(position)
             }
 
             currentDay = currentDay.plusDays(1)
@@ -42,7 +42,7 @@ class DayBasedTariffCalculator(
 
         }
 
-        return Receipt(finalPrice.toInt(), Currency.getInstance("EUR"), emptyList())
+        return positions.toReceipt()
 
     }
 

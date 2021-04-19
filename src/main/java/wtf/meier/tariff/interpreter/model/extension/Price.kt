@@ -3,7 +3,7 @@ package wtf.meier.tariff.interpreter.model.extension
 import wtf.meier.tariff.interpreter.model.Price
 
 
-operator fun Price.times(times: Long): Price =
+operator fun Price.times(times: Int): Price =
     Price(times * credit)
 
 operator fun Price.plus(p2: Price): Price =
