@@ -55,16 +55,14 @@ data class TimeBasedTariff(
     override val billingInterval: Interval?,
     val timeSlots: List<TimeSlot>
 ) : Tariff() {
-    data class TimeSlot(
-        val days: Set<DayOfWeek>,
-        val time: Set<TimeSpan>
-    )
 
-    data class TimeSpan(
+    data class TimeSlot(
         val from: Time,
-        val to: Time
+        val to: Time,
+        val rate: RateId
     ) {
         data class Time(
+            val day: DayOfWeek,
             val hour: Short,
             val minutes: Short
         )
