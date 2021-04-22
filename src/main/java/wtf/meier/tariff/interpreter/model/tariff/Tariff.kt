@@ -53,6 +53,7 @@ data class TimeBasedTariff(
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    val timeZone: TimeZone,
     val timeSlots: List<TimeSlot>
 ) : Tariff() {
 
@@ -63,9 +64,24 @@ data class TimeBasedTariff(
     ) {
         data class Time(
             val day: DayOfWeek,
-            val hour: Short,
-            val minutes: Short
-        )
+            val hour: Int,
+            val minutes: Int
+        ) : Comparable<Time> {
+            override fun compareTo(other: Time): Int =
+                if (day == other.day) {
+                    if(hour == other.hour) {
+                        if(minutes == other.minutes) {
+                            0
+                        } else {
+                            minutes.compareTo(other.minutes)
+                        }
+                    }  else {
+                        hour.compareTo(other.hour)
+                    }
+                } else {
+                    day.compareTo(other.day)
+                }
+            }
     }
 
 }

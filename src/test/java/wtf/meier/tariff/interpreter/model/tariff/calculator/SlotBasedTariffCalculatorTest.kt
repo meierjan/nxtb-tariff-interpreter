@@ -88,7 +88,6 @@ class SlotBasedTariffCalculatorTest {
             rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(4))
         )
 
-        println(receipt.price)
         assert(receipt.price == 4000)
     }
 
