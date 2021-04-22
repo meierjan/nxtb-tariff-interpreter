@@ -1,5 +1,7 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Price
@@ -27,15 +29,15 @@ class TimeBasedTariffCalculatorTest {
     }
 
     private val rate1 = FixedRate(
-            id = RateId(1),
-            currency = Currency.getInstance("EUR"),
-            price = Price(100)
+        id = RateId(1),
+        currency = Currency.getInstance("EUR"),
+        price = Price(100)
     )
 
     private val rate2 = FixedRate(
-            id = RateId(2),
-            currency = Currency.getInstance("EUR"),
-            price = Price(50)
+        id = RateId(2),
+        currency = Currency.getInstance("EUR"),
+        price = Price(50)
     )
 
     /**
@@ -45,205 +47,205 @@ class TimeBasedTariffCalculatorTest {
      *  10:00 PM -> 08:00 AM -> 0.5 Euro
      */
     private val tariff1 = TimeBasedTariff(
-            id = TariffId(1),
-            freeSeconds = 0,
-            billingInterval = null,
-            rates = setOf(
-                    rate1,
-                    rate2
+        id = TariffId(1),
+        freeSeconds = 0,
+        billingInterval = null,
+        rates = setOf(
+            rate1,
+            rate2
+        ),
+        timeSlots = listOf(
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
             ),
-            timeSlots = listOf(
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.MONDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.MONDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.MONDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.TUESDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
-
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.TUESDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.TUESDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.TUESDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.WEDNESDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
-
-
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.WEDNESDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.WEDNESDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.WEDNESDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.THURSDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
-
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.THURSDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.THURSDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.THURSDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.FRIDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
-
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.FRIDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.FRIDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.FRIDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SATURDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
-
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SATURDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SATURDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SATURDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SUNDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
-
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SUNDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SUNDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            rate = rate1.id
-                    ),
-                    TimeBasedTariff.TimeSlot(
-                            from = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.SUNDAY,
-                                    hour = 22,
-                                    minutes = 0
-                            ),
-                            to = TimeBasedTariff.TimeSlot.Time(
-                                    DayOfWeek.MONDAY,
-                                    hour = 8,
-                                    minutes = 0
-                            ),
-                            rate = rate2.id
-                    ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
             ),
-            timeZone = timezone
+
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
+
+
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
+
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.FRIDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
+
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.FRIDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.FRIDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.FRIDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SATURDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
+
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SATURDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SATURDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SATURDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SUNDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
+
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SUNDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SUNDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.SUNDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
+        ),
+        timeZone = timezone
     )
 
     @Test
@@ -256,7 +258,7 @@ class TimeBasedTariffCalculatorTest {
         val receipt = calculator.calculate(tariff1, start, end)
 
 
-        assert(receipt.price == 250) { "Price expected price: '${receipt.price}' is not 250" }
+        assertThat(receipt.price, equalTo(250))
 
     }
 
@@ -267,7 +269,7 @@ class TimeBasedTariffCalculatorTest {
 
         val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
 
-        assert(slot == tariff1.timeSlots.first()) { "Timeslot $slot is not correct" }
+        assertThat(slot, equalTo(tariff1.timeSlots.first()))
 
     }
 

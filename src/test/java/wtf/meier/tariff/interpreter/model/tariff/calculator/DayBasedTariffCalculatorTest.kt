@@ -1,5 +1,7 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Interval
@@ -54,7 +56,7 @@ internal class DayBasedTariffCalculatorTest {
 
         // 2 started days
 
-        assert(receipt.price == 4000)
+        assertThat(receipt.price, equalTo(4000))
 
 
     }

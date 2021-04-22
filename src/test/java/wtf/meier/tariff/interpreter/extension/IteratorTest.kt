@@ -1,7 +1,8 @@
 package wtf.meier.tariff.interpreter.extension
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class IteratorTest {
@@ -11,7 +12,7 @@ class IteratorTest {
 
         listIterator.forwardBefore("sehr")
 
-        assert(listIterator.next() == "sehr")
+        assertThat(listIterator.next(), equalTo("sehr"))
     }
 
     @Test
@@ -20,7 +21,7 @@ class IteratorTest {
 
         listIterator.forwardBefore("jonas")
 
-        assert(listIterator.next() == "jonas")
+        assertThat(listIterator.next(), equalTo("jonas"))
     }
 
     @Test
@@ -31,7 +32,7 @@ class IteratorTest {
             listIterator.forwardBefore("jonas")
         }
 
-        assertEquals("item jonas not found in ListIterator", exception.message)
+        assertThat("item jonas not found in ListIterator", equalTo(exception.message))
 
     }
 }
