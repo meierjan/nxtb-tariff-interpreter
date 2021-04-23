@@ -262,6 +262,19 @@ class TimeBasedTariffCalculatorTest {
 
     }
 
+    @Test
+    fun `test Tuesday 7AM to Tuesday 8AM`() {
+
+        val start = ZonedDateTime.of(2021, 4, 20, 7, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val end = ZonedDateTime.of(2021, 4, 20, 8, 0, 0, 0, timezone.toZoneId()).toInstant()
+
+        val receipt = calculator.calculate(tariff1, start, end)
+
+        // One second into 8AM slot, so additional 100 apply
+        assertThat(receipt.price, equalTo(150))
+
+    }
+
 
     @Test
     fun `test intersecting slot correct if later slot that day`() {
