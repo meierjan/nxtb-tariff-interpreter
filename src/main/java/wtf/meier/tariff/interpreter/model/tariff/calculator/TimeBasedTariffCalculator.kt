@@ -70,25 +70,27 @@ class TimeBasedTariffCalculator(
         return bill.toReceipt()
     }
 
+
     fun firstIntersectingSlot(list: List<TimeBasedTariff.TimeSlot>, at: ZonedDateTime): TimeBasedTariff.TimeSlot? {
-        return list.maxByOrNull { slot ->
+        // Check all slots and choose the one with the closest starting date
+        return list.minByOrNull { slot ->
             val (day, hour, minute) = slot.from
 
-            val adjuster = TemporalAdjusters.previousOrSame(day)
-            val slotStart = at.with(adjuster)
+            // Put the slot start into the same week and timezone of the requested date
+            var adjuster = TemporalAdjusters.previousOrSame(day)
+            var slotStart = at.with(adjuster)
                     .withHour(hour)
                     .withMinute(minute)
 
-            var duration = Duration.between(at, slotStart)
-
-            // Disregard slots starting in the future
+            // Adjust the slot if it happen to be later that same day
             if (slotStart > at) {
-                // Hack to return a larger duration than possible during a week
-                duration = Duration.ofDays(-100)
+                adjuster = TemporalAdjusters.previous(day)
+                slotStart = at.with(adjuster)
+                    .withHour(hour)
+                    .withMinute(minute)
             }
 
-            // Durations are negative, so in order to get the shortest duration, we need the maximum one
-            duration
+            Duration.between(slotStart, at)
         }
     }
 
