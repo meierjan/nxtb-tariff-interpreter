@@ -1,5 +1,7 @@
 package wtf.meier.tariff.interpreter.model.rate.calculator
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Price
@@ -28,7 +30,7 @@ internal class FixedRateCalculatorTest {
 
         val price = fixedRateCalculator.calculate(rate, Instant.ofEpochMilli(0), Instant.ofEpochMilli(1337))
 
-        assert(price.price.credit == 1000)
+        assertThat(price.price.credit, equalTo(1000))
     }
 
 }

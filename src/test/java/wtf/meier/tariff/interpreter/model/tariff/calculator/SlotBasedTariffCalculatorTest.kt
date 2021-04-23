@@ -1,5 +1,7 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Interval
@@ -64,7 +66,7 @@ class SlotBasedTariffCalculatorTest {
             rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(1))
         )
 
-        assert(receipt.price == 2000)
+        assertThat(receipt.price, equalTo(2000))
     }
 
     @Test
@@ -76,7 +78,7 @@ class SlotBasedTariffCalculatorTest {
             rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(2))
         )
 
-        assert(receipt.price == 2000)
+        assertThat(receipt.price, equalTo(2000))
     }
 
     @Test
@@ -88,7 +90,7 @@ class SlotBasedTariffCalculatorTest {
             rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(4))
         )
 
-        assert(receipt.price == 4000)
+        assertThat(receipt.price, equalTo(4000))
     }
 
     @Test
@@ -100,6 +102,6 @@ class SlotBasedTariffCalculatorTest {
             rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(10))
         )
 
-        assert(receipt.price == 4000)
+        assertThat(receipt.price, equalTo(4000))
     }
 }

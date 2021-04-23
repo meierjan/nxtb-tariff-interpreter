@@ -1,5 +1,7 @@
 package wtf.meier.tariff.interpreter.model.rate.calculator
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Interval
@@ -40,7 +42,7 @@ class TimeBaseRateCalculatorTest {
         val receipt = calculator.calculate(rate1, start, end)
 
         // 0 seconds = base_price
-        assert(receipt.price.credit == 50)
+        assertThat(receipt.price.credit, equalTo(50))
     }
 
 
@@ -52,7 +54,7 @@ class TimeBaseRateCalculatorTest {
         val receipt = calculator.calculate(rate1, start, end)
 
         // seconds + 1 * interval
-        assert(receipt.price.credit == 250)
+        assertThat(receipt.price.credit, equalTo(250))
     }
 
     @Test
@@ -63,7 +65,7 @@ class TimeBaseRateCalculatorTest {
         val receipt = calculator.calculate(rate1, start, end)
 
         // base_price (50) + 4 * interval (200)
-        assert(receipt.price.credit == 850)
+        assertThat(receipt.price.credit, equalTo(850))
     }
 
     @Test
@@ -74,7 +76,7 @@ class TimeBaseRateCalculatorTest {
         val receipt = calculator.calculate(rate1, start, end)
 
         // base (50) + 10 * interval (200) > 1000 -> max_price
-        assert(receipt.price.credit == 1000)
+        assertThat(receipt.price.credit, equalTo(1000))
     }
 
 }
