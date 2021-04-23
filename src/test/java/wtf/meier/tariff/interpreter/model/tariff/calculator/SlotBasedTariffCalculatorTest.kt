@@ -9,12 +9,14 @@ import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.rate.RateId
+import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.HOURS
+import java.util.concurrent.TimeUnit.MINUTES
 
 class SlotBasedTariffCalculatorTest {
 
@@ -103,5 +105,171 @@ class SlotBasedTariffCalculatorTest {
         )
 
         assertThat(receipt.price, equalTo(4000))
+    }
+
+
+    private val leipzigBasisTariff = SlotBasedTariff(
+        id = TariffId(2),
+        freeSeconds = 0,
+        rates = setOf(
+            TimeBasedRate(
+                id = RateId(1),
+                currency = Currency.getInstance("EUR"),
+                interval = Interval(15, MINUTES),
+                basePrice = Price(0),
+                maxPrice = Price(1500),
+                minPrice = Price(0),
+                pricePerInterval = Price(100)
+            )
+        ),
+        slots = setOf(
+            SlotBasedTariff.Slot(
+                start = Interval(0, TimeUnit.HOURS),
+                end = null,
+                RateId(1)
+            )
+        ),
+        billingInterval = Interval(1, TimeUnit.DAYS)
+    )
+
+    @Test
+    fun `leipzigBasis for 32 min`() {
+
+        val receipt = calculator.calculate(
+            tariff = leipzigBasisTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(32))
+        )
+
+        assertThat(receipt.price, equalTo(300))
+    }
+
+    @Test
+    fun `leipzigBasis for 26h`() {
+
+        val receipt = calculator.calculate(
+            tariff = leipzigBasisTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(26))
+        )
+
+        assertThat(receipt.price, equalTo(2300)) // 1500 for 24h and 2x400
+    }
+
+
+
+
+    private val jansBadTariff = SlotBasedTariff(
+        id = TariffId(2),
+        freeSeconds = 0,
+        rates = setOf(
+            FixedRate(
+                id = RateId(1),
+                currency = Currency.getInstance("EUR"),
+                price = Price(100)
+            ),
+        ),
+        slots = setOf(
+            SlotBasedTariff.Slot(
+                start = Interval(0, TimeUnit.MINUTES),
+                end = Interval(17, TimeUnit.MINUTES),
+                RateId(1)
+            ),
+            SlotBasedTariff.Slot(
+                start = Interval(17, TimeUnit.MINUTES),
+                end = Interval(34, TimeUnit.MINUTES),
+                RateId(1)
+            ),
+            SlotBasedTariff.Slot(
+                start = Interval(34, TimeUnit.MINUTES),
+                end = null,
+                RateId(1)
+            )
+        ),
+        billingInterval = Interval(20, TimeUnit.MINUTES)
+    )
+
+    @Test
+    fun `jansBadTariff for 35min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(35))
+        )
+
+        assertThat(receipt.price, equalTo(300))
+    }
+
+    @Test
+    fun `jansBadTariff for 16min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(16))
+        )
+
+        assertThat(receipt.price, equalTo(100))
+    }
+
+    @Test
+    fun `jansBadTariff for 19min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(19))
+        )
+
+        assertThat(receipt.price, equalTo(200))
+    }
+
+    @Test
+    fun `jansBadTariff for 21min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(21))
+        )
+
+        assertThat(receipt.price, equalTo(300))
+    }
+
+    @Test
+    fun `jansBadTariff for 36min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(36))
+        )
+
+        assertThat(receipt.price, equalTo(300))
+    }
+
+    @Test
+    fun `jansBadTariff for 39min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(39))
+        )
+
+        assertThat(receipt.price, equalTo(400))
+    }
+
+    @Test
+    fun `jansBadTariff for 41min`() {
+
+        val receipt = calculator.calculate(
+            tariff = jansBadTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(MINUTES.toMillis(41))
+        )
+
+        assertThat(receipt.price, equalTo(500))
     }
 }
