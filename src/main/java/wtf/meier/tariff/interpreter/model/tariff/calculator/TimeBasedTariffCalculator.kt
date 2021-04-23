@@ -5,7 +5,7 @@ import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
-import wtf.meier.tariff.interpreter.util.CyclicList
+import wtf.meier.tariff.interpreter.util.CyclicListIterator
 import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -28,7 +28,7 @@ class TimeBasedTariffCalculator(
                 ?: throw RuntimeException("not slot found -> slots need to be exhaustive")
 
 
-        val slotIterator = CyclicList(sortedSlots).listIterator()
+        val slotIterator = CyclicListIterator(sortedSlots)
                 .forwardBefore(firstIntersectingSlot)
 
 
