@@ -264,12 +264,35 @@ class TimeBasedTariffCalculatorTest {
 
 
     @Test
-    fun `test intersecting slot correct`() {
+    fun `test intersecting slot correct if later slot that day`() {
+        // Monday
         val start = ZonedDateTime.of(2021, 4, 19, 16, 0, 0, 0, timezone.toZoneId())
 
         val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
 
-        assertThat(slot, equalTo(tariff1.timeSlots.first()))
+        assertThat(slot, equalTo(tariff1.timeSlots.first())) // Monday 8am
+
+    }
+
+    @Test
+    fun `test intersecting slot correct for same start`() {
+        // Sunday
+        val start = ZonedDateTime.of(2021, 4, 25, 22, 0, 0, 0, timezone.toZoneId())
+
+        val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
+
+        assertThat(slot, equalTo(tariff1.timeSlots.last())) // Sunday 22pm
+
+    }
+
+    @Test
+    fun `test intersecting slot correct if slot started day before`() {
+        // Wednesday
+        val start = ZonedDateTime.of(2021, 4, 21, 6, 12, 0, 0, timezone.toZoneId())
+
+        val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
+
+        assertThat(slot, equalTo(tariff1.timeSlots[3])) // TUESDAY 22pm
 
     }
 
