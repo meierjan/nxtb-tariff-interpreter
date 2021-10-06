@@ -156,6 +156,18 @@ class SlotBasedTariffCalculatorTest {
         assertThat(receipt.price, equalTo(2300)) // 1500 for 24h and 2x400
     }
 
+    @Test
+    fun `leipzigBasis for 24h 17min`() {
+
+        val receipt = calculator.calculate(
+            tariff = leipzigBasisTariff,
+            rentalStart = Instant.ofEpochMilli(0),
+            rentalEnd = Instant.ofEpochMilli(HOURS.toMillis(24) + MINUTES.toMillis(17))
+        )
+
+        assertThat(receipt.price, equalTo(1700)) // 1500 for 24h and 2x100 for 17 minutes
+    }
+
 
 
 
