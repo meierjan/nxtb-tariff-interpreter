@@ -4,6 +4,7 @@ import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
+import java.lang.reflect.Constructor
 import java.time.DayOfWeek
 import java.time.Instant
 import java.util.*
@@ -22,8 +23,7 @@ sealed class Tariff {
     abstract val billingInterval: Interval?
 
 }
-
-data class SlotBasedTariff(
+class SlotBasedTariff(
     override val id: TariffId,
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
@@ -44,7 +44,12 @@ data class SlotBasedTariff(
 
             return t1 <= duration
         }
+
+        fun getDuration(): Interval {
+            return end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
+        }
     }
+
 }
 
 
@@ -69,19 +74,19 @@ data class TimeBasedTariff(
         ) : Comparable<Time> {
             override fun compareTo(other: Time): Int =
                 if (day == other.day) {
-                    if(hour == other.hour) {
-                        if(minutes == other.minutes) {
+                    if (hour == other.hour) {
+                        if (minutes == other.minutes) {
                             0
                         } else {
                             minutes.compareTo(other.minutes)
                         }
-                    }  else {
+                    } else {
                         hour.compareTo(other.hour)
                     }
                 } else {
                     day.compareTo(other.day)
                 }
-            }
+        }
     }
 
 }
