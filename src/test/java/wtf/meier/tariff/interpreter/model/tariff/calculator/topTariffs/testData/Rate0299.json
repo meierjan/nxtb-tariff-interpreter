@@ -1,0 +1,131 @@
+{
+    "rate_meta": {
+        "id": 299,
+        "currency": "CZK",
+        "included_free_minutes": 0
+    },
+    "chart_meta": {
+        "limit": null,
+        "max_duration_seconds": 259290,
+        "assume_full_minute_tariff": true,
+        "fictive_lending_start_time": null,
+        "time": 199
+    },
+    "chart": [
+        {
+            "start": 1,
+            "end": 59,
+            "price": 0
+        },
+        {
+            "start": 60,
+            "end": 1859,
+            "price": 2400
+        },
+        {
+            "start": 1860,
+            "end": 3659,
+            "price": 4800
+        },
+        {
+            "start": 3660,
+            "end": 5459,
+            "price": 7200
+        },
+        {
+            "start": 5460,
+            "end": 7259,
+            "price": 9600
+        },
+        {
+            "start": 7260,
+            "end": 9059,
+            "price": 12000
+        },
+        {
+            "start": 9060,
+            "end": 10859,
+            "price": 14400
+        },
+        {
+            "start": 10860,
+            "end": 86459,
+            "price": 15000
+        },
+        {
+            "start": 86460,
+            "end": 88259,
+            "price": 17400
+        },
+        {
+            "start": 88260,
+            "end": 90059,
+            "price": 19800
+        },
+        {
+            "start": 90060,
+            "end": 91859,
+            "price": 22200
+        },
+        {
+            "start": 91860,
+            "end": 93659,
+            "price": 24600
+        },
+        {
+            "start": 93660,
+            "end": 95459,
+            "price": 27000
+        },
+        {
+            "start": 95460,
+            "end": 97259,
+            "price": 29400
+        },
+        {
+            "start": 97260,
+            "end": 172859,
+            "price": 30000
+        },
+        {
+            "start": 172860,
+            "end": 174659,
+            "price": 32400
+        },
+        {
+            "start": 174660,
+            "end": 176459,
+            "price": 34800
+        },
+        {
+            "start": 176460,
+            "end": 178259,
+            "price": 37200
+        },
+        {
+            "start": 178260,
+            "end": 180059,
+            "price": 39600
+        },
+        {
+            "start": 180060,
+            "end": 181859,
+            "price": 42000
+        },
+        {
+            "start": 181860,
+            "end": 183659,
+            "price": 44400
+        },
+        {
+            "start": 183660,
+            "end": 259259,
+            "price": 45000
+        },
+        {
+            "start": 259260,
+            "end": null,
+            "price": 47400
+        }
+    ]
+}
