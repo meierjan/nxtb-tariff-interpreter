@@ -1,10 +1,8 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs
 
-import com.google.gson.Gson
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wtf.meier.tariff.interpreter.Calculator
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
@@ -13,21 +11,18 @@ import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
-import wtf.meier.tariff.interpreter.model.tariff.calculator.SlotBasedTariffCalculator
-import wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs.testData.PriceChart
-import java.io.FileReader
-import java.time.Instant
+import wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs.testData.PriceChartTester
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class tariff315Test {
     private lateinit var rateCalculator: RateCalculator
-    private lateinit var calculator: SlotBasedTariffCalculator
+    private lateinit var calculator: Calculator
 
     @BeforeEach
     fun setup() {
         rateCalculator = RateCalculator()
-        calculator = SlotBasedTariffCalculator()
+        calculator = Calculator()
     }
 
     private val tariff315 = SlotBasedTariff(
@@ -84,23 +79,14 @@ class tariff315Test {
 
         billingInterval = null
     )
+
     @Test
     fun `test tariff 315 with priceChart`() {
-        val gson = Gson()
-        val priceChart = gson.fromJson(
-            FileReader("src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0315.json"),
-            PriceChart::class.java
+        val tester = PriceChartTester()
+        tester.testPriceChart(
+            "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0315.json",
+            tariff315,
+            calculator
         )
-
-        priceChart.chart.map { dataPoint ->
-            if (dataPoint.end == 0L) return
-            val receipt = calculator.calculate(
-                tariff = tariff315,
-                rentalStart = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(0)),
-                rentalEnd = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(dataPoint.end))
-            )
-
-            assertThat(receipt.price, equalTo(dataPoint.price))
-        }
     }
 }
