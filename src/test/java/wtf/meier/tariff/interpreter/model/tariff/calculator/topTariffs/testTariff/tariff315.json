@@ -1,0 +1,114 @@
+{
+"type": "SlotBasedTariff",
+  "id": {
+    "id": 1
+  },
+  "freeSeconds": 1500,
+  "rates": [
+    {
+      "type": "FixedRate",
+      "id": {
+        "id": 1
+      },
+      "currency": "PLN",
+      "price": {
+        "credit": 100
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": {
+        "id": 2
+      },
+      "currency": "PLN",
+      "price": {
+        "credit": 300
+      }
+    },
+    {
+      "type": "TimeBasedRate",
+      "id": {
+        "id": 3
+      },
+      "currency": "PLN",
+      "interval": {
+        "timeAmount": 60,
+        "timeUnit": "MINUTES"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 500
+      },
+      "maxPrice": {
+        "credit": 2147483647
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": {
+        "id": 4
+      },
+      "currency": "PLN",
+      "price": {
+        "credit": 30000
+      }
+    }
+  ],
+  "billingInterval": null,
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 1,
+        "timeUnit": "HOURS"
+      },
+      "rate": {
+        "id": 1
+      }
+    },
+    {
+      "start": {
+        "timeAmount": 1,
+        "timeUnit": "HOURS"
+      },
+      "end": {
+        "timeAmount": 2,
+        "timeUnit": "HOURS"
+      },
+      "rate": {
+        "id": 2
+      }
+    },
+    {
+      "start": {
+        "timeAmount": 2,
+        "timeUnit": "HOURS"
+      },
+      "end": {
+        "timeAmount": 12,
+        "timeUnit": "HOURS"
+      },
+      "rate": {
+        "id": 3
+      }
+    },
+    {
+      "start": {
+        "timeAmount": 12,
+        "timeUnit": "MINUTES"
+      },
+      "end": null,
+      "rate": {
+        "id": 4
+      }
+    }
+  ]
+}

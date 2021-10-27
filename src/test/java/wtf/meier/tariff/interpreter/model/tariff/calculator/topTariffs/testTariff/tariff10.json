@@ -1,0 +1,32 @@
+{
+  "type": "SlotBasedTariff",
+  "id": {
+    "id": 1
+  },
+  "freeSeconds": 0,
+  "rates": [
+    {
+      "type": "FixedRate",
+      "id": {
+        "id": 1
+      },
+      "currency": "EUR",
+      "price": {
+        "credit": 0
+      }
+    }
+  ],
+  "billingInterval": null,
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": null,
+      "rate": {
+        "id": 1
+      }
+    }
+  ]
+}

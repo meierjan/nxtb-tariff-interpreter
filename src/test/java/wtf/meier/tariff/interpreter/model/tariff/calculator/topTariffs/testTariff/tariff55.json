@@ -1,0 +1,48 @@
+{
+  "type": "SlotBasedTariff",
+  "id": {
+    "id": 1
+  },
+  "freeSeconds": 3600,
+  "rates": [
+    {
+      "type": "TimeBasedRate",
+      "id": {
+        "id": 1
+      },
+      "currency": "EUR",
+      "interval": {
+        "timeAmount": 30,
+        "timeUnit": "MINUTES"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 50
+      },
+      "maxPrice": {
+        "credit": 500
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    }
+  ],
+  "billingInterval": {
+    "timeAmount": 1,
+    "timeUnit": "DAYS"
+  },
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 60,
+        "timeUnit": "MINUTES"
+      },
+      "end": null,
+      "rate": {
+        "id": 1
+      }
+    }
+  ]
+}
