@@ -1,5 +1,8 @@
 package wtf.meier.tariff.interpreter.model.tariff
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import wtf.meier.tariff.interpreter.extension.customSerializer.TimeZoneSerializer
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
@@ -10,12 +13,13 @@ import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class TariffId(val id: Long)
+// changed from inline to data class, because inline classes are unsupported by kotlin serialization
+@Serializable
+data class TariffId(val id: Long)
 
 class InvalidTariffFormatException(message: String) : RuntimeException(message)
 
+@Serializable
 sealed class Tariff {
     abstract val id: TariffId
     abstract val freeSeconds: Int
@@ -23,6 +27,8 @@ sealed class Tariff {
     abstract val billingInterval: Interval?
 
 }
+@Serializable
+@SerialName("SlotBasedTariff")
 class SlotBasedTariff(
     override val id: TariffId,
     override val freeSeconds: Int,
@@ -30,6 +36,7 @@ class SlotBasedTariff(
     override val billingInterval: Interval?,
     val slots: Set<Slot>
 ) : Tariff() {
+    @Serializable
     data class Slot(
         val start: Interval,
         val end: Interval?,
@@ -52,21 +59,24 @@ class SlotBasedTariff(
 
 }
 
-
+@Serializable
+@SerialName("TimeBasedTariff")
 data class TimeBasedTariff(
     override val id: TariffId,
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone,
     val timeSlots: List<TimeSlot>
 ) : Tariff() {
-
+    @Serializable
     data class TimeSlot(
         val from: Time,
         val to: Time,
         val rate: RateId
     ) {
+        @Serializable
         data class Time(
             val day: DayOfWeek,
             val hour: Int,
@@ -90,11 +100,13 @@ data class TimeBasedTariff(
     }
 
 }
-
+@Serializable
+@SerialName("DayBasedTariff")
 data class DayBasedTariff(
     override val id: TariffId,
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone
 ) : Tariff()
