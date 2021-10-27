@@ -1,0 +1,91 @@
+{
+  "type": "SlotBasedTariff",
+  "id": {
+    "id": 1
+  },
+  "freeSeconds": 0,
+  "rates": [
+    {
+      "type": "FixedRate",
+      "id": {
+        "id": 1
+      },
+      "currency": "USD",
+      "price": {
+        "credit": 250
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": {
+        "id": 2
+      },
+      "currency": "USD",
+      "price": {
+        "credit": 750
+      }
+    },
+    {
+      "type": "TimeBasedRate",
+      "id": {
+        "id": 3
+      },
+      "currency": "USD",
+      "interval": {
+        "timeAmount": 30,
+        "timeUnit": "MINUTES"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 900
+      },
+      "maxPrice": {
+        "credit": 2147483647
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    }
+  ],
+  "billingInterval": null,
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 75,
+        "timeUnit": "MINUTES"
+      },
+      "rate": {
+        "id": 1
+      }
+    },
+    {
+      "start": {
+        "timeAmount": 75,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 105,
+        "timeUnit": "MINUTES"
+      },
+      "rate": {
+        "id": 2
+      }
+    },
+    {
+      "start": {
+        "timeAmount": 105,
+        "timeUnit": "MINUTES"
+      },
+      "end": null,
+      "rate": {
+        "id": 3
+      }
+    }
+  ]
+}

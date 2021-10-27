@@ -1,0 +1,48 @@
+{
+  "type": "SlotBasedTariff",
+  "id": {
+    "id": 1
+  },
+  "freeSeconds": 1800,
+  "rates": [
+    {
+      "type": "TimeBasedRate",
+      "id": {
+        "id": 1
+      },
+      "currency": "CZK",
+      "interval": {
+        "timeAmount": 30,
+        "timeUnit": "MINUTES"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 2400
+      },
+      "maxPrice": {
+        "credit": 15000
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    }
+  ],
+  "billingInterval": {
+    "timeAmount": 1,
+    "timeUnit": "DAYS"
+  },
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": null,
+      "rate": {
+        "id": 1
+      }
+    }
+  ]
+}
