@@ -10,11 +10,13 @@ class RateCalculator(
     private val timeBaseRateCalculator: TimeBaseRateCalculator = TimeBaseRateCalculator(),
     private val fixedRateCalculator: FixedRateCalculator = FixedRateCalculator()
 ) {
-
+    // TODO make start and end non-optional
     data class CalculatedPrice(
         val price: Price,
         val currency: Currency,
-        val description: String
+        val description: String,
+        val positionStart: Instant? = null,
+        val positionEnd: Instant? = null
     )
 
     fun calculate(rate: Rate, rentalStart: Instant, rentalEnd: Instant): CalculatedPrice =
