@@ -1,5 +1,6 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import wtf.meier.tariff.interpreter.extension.RentalPeriod
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.plus
 import wtf.meier.tariff.interpreter.model.Interval
@@ -18,38 +19,34 @@ class SlotBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
 ) {
 
-    fun calculate(tariff: SlotBasedTariff, rentalStart: Instant, rentalEnd: Instant): Receipt {
+    fun calculate(tariff: SlotBasedTariff, rentalPeriod: RentalPeriod): Receipt {
         val positions = mutableListOf<RateCalculator.CalculatedPrice>()
+        positions.addAll(rentalPeriod.positions)
         val rateMap = tariff.rates.associateBy { it.id }
 
-        var slotStart = rentalStart
+        var slotStart: Instant = rentalPeriod.calculatedStart
 
-        val rentalEndMinusFreeSeconds = if (tariff.freeSeconds == 0) {
-            rentalEnd
-        } else {
-            deductFreeSeconds(rentalEnd, tariff, positions)
-        }
-        if (rentalStart >= rentalEndMinusFreeSeconds) return positions.toReceipt()
+        if (rentalPeriod.calculatedStart >= rentalPeriod.calculatedEnd) return positions.toReceipt()
 
         var currentBillingEnd = if (tariff.billingInterval == null) {
-            rentalEndMinusFreeSeconds
+            rentalPeriod.calculatedEnd
         } else {
-            rentalStart.plus(tariff.billingInterval)
+            rentalPeriod.calculatedStart.plus(tariff.billingInterval)
         }
 
-        val filteredSlots = tariff.slots.filter { it.matches(rentalStart, currentBillingEnd) }
+        val filteredSlots = tariff.slots.filter { it.matches(rentalPeriod.calculatedStart, currentBillingEnd) }
         val sortedSlots = filteredSlots.sortedBy { it.end?.durationMillis() ?: Long.MAX_VALUE }
         val sortedCyclicSlots = CyclicList(sortedSlots)
         var currentSlotIndex = 0
 
-        var slotEnd =
+        var slotEnd:Instant =
             minOf(
-                rentalEndMinusFreeSeconds,
+                rentalPeriod.calculatedEnd,
                 currentBillingEnd,
                 slotStart.plus(sortedCyclicSlots[currentSlotIndex].end ?: Interval(Integer.MAX_VALUE, TimeUnit.DAYS))
             )
 
-        while (slotStart < rentalEndMinusFreeSeconds) {
+        while (slotStart < rentalPeriod.calculatedEnd) {
 
             val rate = rateMap[sortedCyclicSlots[currentSlotIndex].rate]
                 ?: throw InvalidTariffFormatException("Rate with id ${sortedCyclicSlots[currentSlotIndex].rate.id} referenced but not defined")
@@ -65,27 +62,11 @@ class SlotBasedTariffCalculator(
             }
             slotEnd =
                 minOf(
-                    rentalEndMinusFreeSeconds,
+                    rentalPeriod.calculatedEnd,
                     currentBillingEnd,
                     slotStart.plus(sortedCyclicSlots[currentSlotIndex].getDuration())
                 )
         }
         return positions.toReceipt()
-    }
-
-
-    private fun deductFreeSeconds(
-        rentalEnd: Instant,
-        tariff: Tariff,
-        positions: MutableList<RateCalculator.CalculatedPrice>
-    ): Instant {
-        positions.add(
-            RateCalculator.CalculatedPrice(
-                price = Price(0),
-                currency = tariff.rates.first().currency,
-                description = "${TimeUnit.SECONDS.toMinutes(tariff.freeSeconds.toLong())} free minutes were deducted"
-            )
-        )
-        return rentalEnd.minusSeconds(tariff.freeSeconds.toLong())
     }
 }

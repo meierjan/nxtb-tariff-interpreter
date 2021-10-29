@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wtf.meier.tariff.interpreter.extension.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
@@ -253,9 +254,9 @@ class TimeBasedTariffCalculatorTest {
 
         val start = ZonedDateTime.of(2021, 4, 19, 16, 0, 0, 0, timezone.toZoneId()).toInstant()
         val end = ZonedDateTime.of(2021, 4, 20, 21, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val rentalPeriod = RentalPeriod(start, end)
 
-
-        val receipt = calculator.calculate(tariff1, start, end)
+        val receipt = calculator.calculate(tariff1, rentalPeriod)
 
 
         assertThat(receipt.price, equalTo(250))
@@ -267,8 +268,9 @@ class TimeBasedTariffCalculatorTest {
 
         val start = ZonedDateTime.of(2021, 4, 20, 7, 0, 0, 0, timezone.toZoneId()).toInstant()
         val end = ZonedDateTime.of(2021, 4, 20, 8, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val rentalPeriod = RentalPeriod(start, end)
 
-        val receipt = calculator.calculate(tariff1, start, end)
+        val receipt = calculator.calculate(tariff1, rentalPeriod)
 
         // One second into 8AM slot, so additional 100 apply
         assertThat(receipt.price, equalTo(150))

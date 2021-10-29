@@ -1,5 +1,6 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import wtf.meier.tariff.interpreter.extension.RentalPeriod
 import wtf.meier.tariff.interpreter.extension.forwardBefore
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
@@ -7,19 +8,18 @@ import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
 import wtf.meier.tariff.interpreter.util.CyclicList
 import java.time.Duration
-import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.TemporalAdjusters
 
 class TimeBasedTariffCalculator(
         private val rateCalculator: RateCalculator = RateCalculator()
 ) {
-    fun calculate(tariff: TimeBasedTariff, rentalStart: Instant, rentalEnd: Instant): Receipt {
+    fun calculate(tariff: TimeBasedTariff, rentalPeriod: RentalPeriod): Receipt {
 
 
         val ratesById = tariff.rates.associateBy { it.id }
-        val zonedRentalStart = rentalStart.atZone(tariff.timeZone.toZoneId())
-        val zonedRentalEnd = rentalEnd.atZone(tariff.timeZone.toZoneId())
+        val zonedRentalStart = rentalPeriod.calculatedStart.atZone(tariff.timeZone.toZoneId())
+        val zonedRentalEnd = rentalPeriod.calculatedEnd.atZone(tariff.timeZone.toZoneId())
 
         // sort slots by start-time
         val sortedSlots = tariff.timeSlots.sortedBy { it.from }
