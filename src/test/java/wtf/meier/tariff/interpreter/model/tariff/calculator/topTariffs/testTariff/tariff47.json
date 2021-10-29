@@ -4,6 +4,7 @@
     "id": 1
   },
   "freeSeconds": 2100,
+  "fairTariff": true,
   "rates": [
     {
       "type": "TimeBasedRate",

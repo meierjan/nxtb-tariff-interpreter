@@ -3,6 +3,7 @@
   "id": {
     "id": 1
   },
+  "fairTariff": true,
   "freeSeconds": 1200,
   "rates": [
     {
