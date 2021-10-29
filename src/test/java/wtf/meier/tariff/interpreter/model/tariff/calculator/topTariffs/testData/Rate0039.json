@@ -1,0 +1,51 @@
+{
+    "rate_meta": {
+        "id": 39,
+        "currency": "EUR",
+        "included_free_minutes": 0
+    },
+    "chart_meta": {
+        "limit": null,
+        "max_duration_seconds": 604890,
+        "assume_full_minute_tariff": true,
+        "fictive_lending_start_time": 1617573600,
+        "time": 553
+    },
+    "chart": [
+        {
+            "start": 1,
+            "end": 87899,
+            "price": 1500
+        },
+        {
+            "start": 87900,
+            "end": 174299,
+            "price": 3000
+        },
+        {
+            "start": 174300,
+            "end": 260699,
+            "price": 4500
+        },
+        {
+            "start": 260700,
+            "end": 347099,
+            "price": 6000
+        },
+        {
+            "start": 347100,
+            "end": 433499,
+            "price": 7500
+        },
+        {
+            "start": 433500,
+            "end": 519899,
+            "price": 9000
+        },
+        {
+            "start": 519900,
+            "end": null,
+            "price": 10500
+        }
+    ]
+}
