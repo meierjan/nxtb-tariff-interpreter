@@ -4,7 +4,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.Calculator
-import wtf.meier.tariff.interpreter.helper.serializer.TariffDeserializer
+import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.extension.customSerializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs.testData.PriceChartTester
 import java.io.FileReader
 import java.time.Instant
@@ -16,11 +17,12 @@ class topTariffsTest {
     fun `test tariff 10 `() {
         val receipt = Calculator().calculate(
             tariff = TariffDeserializer.deserializeTariff(FileReader("src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs//testTariff/tariff10.json").readText()),
-            start = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(0)),
-            end = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(1000000))
-        )
+            rentalPeriod = RentalPeriod(
+                Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(0)),Instant.ofEpochMilli(1000000)
+            ))
 
-        assertThat(receipt.price, equalTo(0))
+                    assertThat (receipt.price, equalTo(0)
+        )
 
     }
 
@@ -29,6 +31,39 @@ class topTariffsTest {
         PriceChartTester.testPriceChart(
             priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0043.json",
             tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff43.json",
+        )
+    }
+
+    @Test
+    fun `test tariff 47`() {
+        PriceChartTester.testPriceChart(
+            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0047.json",
+            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff47.json",
+        )
+    }
+
+    @Test
+    fun `test tariff 55`() {
+        PriceChartTester.testPriceChart(
+            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0055.json",
+            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff55.json",
+        )
+    }
+
+    @Test
+    fun `test tariff 78`() {
+        PriceChartTester.testPriceChart(
+            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0078.json",
+            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff78.json",
+        )
+    }
+
+    @Test
+    // todo priceChart has invalid price!
+    fun `test tariff 92`() {
+        PriceChartTester.testPriceChart(
+            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0092.json",
+            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff92.json",
         )
     }
 
