@@ -7,7 +7,6 @@ import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
-import java.lang.reflect.Constructor
 import java.time.DayOfWeek
 import java.time.Instant
 import java.util.*
@@ -25,6 +24,7 @@ sealed class Tariff {
     abstract val freeSeconds: Int
     abstract val rates: Set<Rate>
     abstract val billingInterval: Interval?
+    abstract val fairTariff: Boolean
 
 }
 @Serializable
@@ -34,6 +34,7 @@ class SlotBasedTariff(
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    override val fairTariff: Boolean = false,
     val slots: Set<Slot>
 ) : Tariff() {
     @Serializable
@@ -66,6 +67,7 @@ data class TimeBasedTariff(
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    override val fairTariff: Boolean = false,
     @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone,
     val timeSlots: List<TimeSlot>
@@ -107,6 +109,7 @@ data class DayBasedTariff(
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    override val fairTariff: Boolean = false,
     @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone
 ) : Tariff()
