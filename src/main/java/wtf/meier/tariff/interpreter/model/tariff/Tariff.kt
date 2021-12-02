@@ -2,12 +2,12 @@ package wtf.meier.tariff.interpreter.model.tariff
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import wtf.meier.tariff.interpreter.extension.customSerializer.TimeZoneSerializer
 import wtf.meier.tariff.interpreter.extension.durationMillis
+import wtf.meier.tariff.interpreter.extension.minus
+import wtf.meier.tariff.interpreter.helper.serializer.TimeZoneSerializer
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
-import java.lang.reflect.Constructor
 import java.time.DayOfWeek
 import java.time.Instant
 import java.util.*
@@ -52,9 +52,8 @@ class SlotBasedTariff(
             return t1 <= duration
         }
 
-        fun getDuration(): Interval {
-            return end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
-        }
+        val duration: Interval
+            get() = end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
     }
 
 }
