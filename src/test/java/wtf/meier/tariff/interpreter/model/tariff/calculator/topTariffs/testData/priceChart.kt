@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import wtf.meier.tariff.interpreter.Calculator
-import wtf.meier.tariff.interpreter.extension.customSerializer.TariffDeserializer
+import wtf.meier.tariff.interpreter.helper.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import java.io.FileReader
 import java.time.Instant
@@ -24,8 +24,7 @@ object PriceChartTester {
     private val format = Json { ignoreUnknownKeys = true }
     private val calculator = Calculator()
 
-    fun testPriceChart(priceChartPath: String, tariffPath: String)
-    {
+    fun testPriceChart(priceChartPath: String, tariffPath: String) {
 
         val priceChart: PriceChart = format.decodeFromString(FileReader(priceChartPath).readText())
         val tariff: Tariff = TariffDeserializer.deserializeTariff(FileReader(tariffPath).readText())

@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.Calculator
-import wtf.meier.tariff.interpreter.extension.customSerializer.TariffDeserializer
+import wtf.meier.tariff.interpreter.helper.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs.testData.PriceChartTester
 import java.io.FileReader
 import java.time.Instant

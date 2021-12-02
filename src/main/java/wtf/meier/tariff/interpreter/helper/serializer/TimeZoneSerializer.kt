@@ -1,4 +1,4 @@
-package wtf.meier.tariff.interpreter.extension.customSerializer
+package wtf.meier.tariff.interpreter.helper.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
