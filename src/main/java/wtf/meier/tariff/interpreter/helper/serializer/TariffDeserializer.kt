@@ -1,4 +1,4 @@
-package wtf.meier.tariff.interpreter.extension.customSerializer
+package wtf.meier.tariff.interpreter.helper.serializer
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
