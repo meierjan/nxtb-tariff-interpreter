@@ -1,16 +1,12 @@
 {
   "type": "SlotBasedTariff",
-  "id": {
-    "id": 1
-  },
+  "id": 1,
   "fairTariff": true,
   "freeSeconds": 0,
   "rates": [
     {
       "type": "TimeBasedRate",
-      "id": {
-        "id": 1
-      },
+      "id": 1,
       "currency": "GBP",
       "interval": {
         "timeAmount": 30,
@@ -41,9 +37,7 @@
         "timeUnit": "MINUTES"
       },
       "end": null,
-      "rate": {
-        "id": 1
-      }
+      "rate": 1
     }
   ]
 }

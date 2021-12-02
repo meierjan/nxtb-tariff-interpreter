@@ -1,15 +1,11 @@
 {
   "type": "SlotBasedTariff",
-  "id": {
-    "id": 1
-  },
+  "id": 1,
   "freeSeconds": 0,
   "rates": [
     {
       "type": "FixedRate",
-      "id": {
-        "id": 1
-      },
+      "id": 1,
       "currency": "EUR",
       "price": {
         "credit": 100
@@ -17,9 +13,7 @@
     },
     {
       "type": "TimeBasedRate",
-      "id": {
-        "id": 2
-      },
+      "id": 2,
       "currency": "EUR",
       "interval": {
         "timeAmount": 30,
@@ -53,9 +47,7 @@
         "timeAmount": 30,
         "timeUnit": "MINUTES"
       },
-      "rate": {
-        "id": 1
-      }
+      "rate": 1
     },
     {
       "start": {
@@ -63,9 +55,7 @@
         "timeUnit": "MINUTES"
       },
       "end": null,
-      "rate": {
-        "id": 2
-      }
+      "rate": 2
     }
   ]
 }

@@ -1,15 +1,11 @@
 {
   "type": "SlotBasedTariff",
-  "id": {
-    "id": 1
-  },
+  "id": 1,
   "freeSeconds": 1200,
   "rates": [
     {
       "type": "FixedRate",
-      "id": {
-        "id": 1
-      },
+      "id": 1,
       "currency": "PLN",
       "price": {
         "credit": 200
@@ -17,9 +13,7 @@
     },
     {
       "type": "TimeBasedRate",
-      "id": {
-        "id": 2
-      },
+      "id": 2,
       "currency": "PLN",
       "interval": {
         "timeAmount": 1,
@@ -40,9 +34,7 @@
     },
     {
       "type": "FixedRate",
-      "id": {
-        "id": 3
-      },
+      "id": 3,
       "currency": "PLN",
       "price": {
         "credit": 30000
@@ -60,9 +52,7 @@
         "timeAmount": 1,
         "timeUnit": "HOURS"
       },
-      "rate": {
-        "id": 1
-      }
+      "rate": 1
     },
     {
       "start": {
@@ -73,9 +63,7 @@
         "timeAmount": 24,
         "timeUnit": "HOURS"
       },
-      "rate": {
-        "id": 2
-      }
+      "rate": 2
     },
     {
       "start": {
@@ -83,9 +71,7 @@
         "timeUnit": "DAYS"
       },
       "end": null,
-      "rate": {
-        "id": 3
-      }
+      "rate": 3
     }
   ]
 }

@@ -4,11 +4,10 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import wtf.meier.tariff.interpreter.Calculator
 import wtf.meier.tariff.interpreter.extension.RentalPeriod
-import wtf.meier.tariff.interpreter.extension.customSerializer.TariffDeserializer
+import wtf.meier.tariff.interpreter.helper.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import java.io.FileReader
 import java.time.Instant
