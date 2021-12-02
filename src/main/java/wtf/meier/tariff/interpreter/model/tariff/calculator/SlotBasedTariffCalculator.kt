@@ -23,11 +23,12 @@ class SlotBasedTariffCalculator(
         val rateMap = tariff.rates.associateBy { it.id }
 
         var slotStart = rentalStart
-
-        val rentalEndMinusFreeSeconds = if (tariff.freeSeconds == 0) {
-            rentalEnd
+        val rentalEndMinusFreeSeconds: Instant
+        if (tariff.freeSeconds == 0) {
+            rentalEndMinusFreeSeconds = rentalEnd
         } else {
-            deductFreeSeconds(rentalEnd, tariff, positions)
+            positions.add(deductFreeSeconds(tariff))
+            rentalEndMinusFreeSeconds = rentalEnd.minusSeconds(tariff.freeSeconds.toLong())
         }
         if (rentalStart >= rentalEndMinusFreeSeconds) return positions.toReceipt()
 
@@ -67,7 +68,7 @@ class SlotBasedTariffCalculator(
                 minOf(
                     rentalEndMinusFreeSeconds,
                     currentBillingEnd,
-                    slotStart.plus(sortedCyclicSlots[currentSlotIndex].getDuration())
+                    slotStart.plus(sortedCyclicSlots[currentSlotIndex].duration)
                 )
         }
         return positions.toReceipt()
@@ -75,17 +76,12 @@ class SlotBasedTariffCalculator(
 
 
     private fun deductFreeSeconds(
-        rentalEnd: Instant,
         tariff: Tariff,
-        positions: MutableList<RateCalculator.CalculatedPrice>
-    ): Instant {
-        positions.add(
-            RateCalculator.CalculatedPrice(
-                price = Price(0),
-                currency = tariff.rates.first().currency,
-                description = "${TimeUnit.SECONDS.toMinutes(tariff.freeSeconds.toLong())} free minutes were deducted"
-            )
-        )
-        return rentalEnd.minusSeconds(tariff.freeSeconds.toLong())
+    ): RateCalculator.CalculatedPrice {
+        return RateCalculator.CalculatedPrice(
+            price = Price(0),
+            currency = tariff.rates.first().currency,
+            description = "${TimeUnit.SECONDS.toMinutes(tariff.freeSeconds.toLong())} free minutes were deducted")
+
     }
 }
