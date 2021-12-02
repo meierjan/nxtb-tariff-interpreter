@@ -1,15 +1,11 @@
 {
   "type": "SlotBasedTariff",
-  "id": {
-    "id": 1
-  },
+  "id": 1,
   "freeSeconds": 1200,
   "rates": [
     {
       "type": "FixedRate",
-      "id": {
-        "id": 1
-      },
+      "id": 1,
       "currency": "PLN",
       "price": {
         "credit": 100
@@ -17,9 +13,7 @@
     },
     {
       "type": "FixedRate",
-      "id": {
-        "id": 2
-      },
+      "id": 2,
       "currency": "PLN",
       "price": {
         "credit": 300
@@ -27,9 +21,7 @@
     },
     {
       "type": "FixedRate",
-      "id": {
-        "id": 3
-      },
+      "id": 3,
       "currency": "PLN",
       "price": {
         "credit": 500
@@ -37,9 +29,7 @@
     },
     {
       "type": "TimeBasedRate",
-      "id": {
-        "id": 4
-      },
+      "id": 4,
       "currency": "PLN",
       "interval": {
         "timeAmount": 1,
@@ -60,9 +50,7 @@
     },
     {
       "type": "FixedRate",
-      "id": {
-        "id": 5
-      },
+      "id": 5,
       "currency": "PLN",
       "price": {
         "credit": 20000
@@ -80,9 +68,7 @@
         "timeAmount": 60,
         "timeUnit": "MINUTES"
       },
-      "rate": {
-        "id": 1
-      }
+      "rate": 1
     },
     {
       "start": {
@@ -93,9 +79,7 @@
         "timeAmount": 120,
         "timeUnit": "MINUTES"
       },
-      "rate": {
-        "id": 2
-      }
+      "rate": 2
     },
     {
       "start": {
@@ -106,9 +90,7 @@
         "timeAmount": 180,
         "timeUnit": "MINUTES"
       },
-      "rate": {
-        "id": 3
-      }
+      "rate": 3
     },
     {
       "start": {
@@ -119,9 +101,7 @@
         "timeAmount": 12,
         "timeUnit": "HOURS"
       },
-      "rate": {
-        "id": 4
-      }
+      "rate": 4
     },
     {
       "start": {
@@ -129,9 +109,7 @@
         "timeUnit": "HOURS"
       },
       "end": null,
-      "rate": {
-        "id": 5
-      }
+      "rate": 5
     }
   ]
 }

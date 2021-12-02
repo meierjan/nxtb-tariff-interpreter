@@ -1,15 +1,11 @@
 {
   "type": "SlotBasedTariff",
-  "id": {
-    "id": 1
-  },
+  "id": 1,
   "freeSeconds": 1800,
   "rates": [
     {
       "type": "TimeBasedRate",
-      "id": {
-        "id": 1
-      },
+      "id": 1,
       "currency": "CZK",
       "interval": {
         "timeAmount": 30,
@@ -40,9 +36,7 @@
         "timeUnit": "MINUTES"
       },
       "end": null,
-      "rate": {
-        "id": 1
-      }
+      "rate": 1
     }
   ]
 }
