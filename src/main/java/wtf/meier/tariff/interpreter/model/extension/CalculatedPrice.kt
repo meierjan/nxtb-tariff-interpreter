@@ -1,17 +1,21 @@
 package wtf.meier.tariff.interpreter.model.extension
 
+import wtf.meier.tariff.interpreter.exception.InconsitantCurrencyException
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
+import java.util.*
 
-fun List<RateCalculator.CalculatedPrice>.toReceipt() : Receipt =
-    Receipt(
+fun List<RateCalculator.CalculatedPrice>.toReceipt(currency: Currency): Receipt {
+    this.map { if (it.currency !== currency) throw InconsitantCurrencyException("The tariff and rate currencies are not compatible")}
+    return Receipt(
         positions = this.map {
             Receipt.Position(
                 price = it.price,
-                description = it.description
+                description = it.description,
+                positionStart = it.calculationStart,
+                positionEnd = it.calculationEnd
             )
         },
-        // TODO: find a better way here
-        currency = this.first().currency
-
+        currency = currency
     )
+}
