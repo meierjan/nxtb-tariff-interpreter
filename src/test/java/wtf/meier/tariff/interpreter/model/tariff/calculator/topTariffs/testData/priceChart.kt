@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import wtf.meier.tariff.interpreter.Calculator
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.helper.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import java.io.FileReader
