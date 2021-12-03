@@ -2,6 +2,7 @@
   "type": "SlotBasedTariff",
   "id": 1,
   "freeSeconds": 60,
+  "currency": "EUR",
   "rates": [
     {
       "type": "TimeBasedRate",

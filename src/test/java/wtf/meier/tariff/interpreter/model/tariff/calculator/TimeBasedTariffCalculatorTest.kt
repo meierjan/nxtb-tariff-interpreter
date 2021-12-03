@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
@@ -51,6 +51,7 @@ class TimeBasedTariffCalculatorTest {
         id = TariffId(1),
         freeSeconds = 0,
         billingInterval = null,
+        currency = Currency.getInstance("EUR"),
         rates = setOf(
             rate1,
             rate2

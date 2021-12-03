@@ -1,16 +1,14 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.plus
 import wtf.meier.tariff.interpreter.model.Interval
-import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.InvalidTariffFormatException
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
-import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import wtf.meier.tariff.interpreter.util.CyclicList
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -26,7 +24,7 @@ class SlotBasedTariffCalculator(
 
         var slotStart: Instant = rentalPeriod.calculatedStart
 
-        if (rentalPeriod.calculatedStart >= rentalPeriod.calculatedEnd) return positions.toReceipt()
+        if (rentalPeriod.calculatedStart >= rentalPeriod.calculatedEnd) return positions.toReceipt(tariff.currency)
 
         var currentBillingEnd = if (tariff.billingInterval == null) {
             rentalPeriod.calculatedEnd
@@ -67,6 +65,6 @@ class SlotBasedTariffCalculator(
                     slotStart.plus(sortedCyclicSlots[currentSlotIndex].getDuration())
                 )
         }
-        return positions.toReceipt()
+        return positions.toReceipt(tariff.currency)
     }
 }

@@ -3,7 +3,8 @@ package wtf.meier.tariff.interpreter.model.tariff
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.FreeMinutesCalculator
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
@@ -16,6 +17,7 @@ internal class FreeMinutesCalculatorTest {
 
     private val fairTariff: Tariff = SlotBasedTariff(
         id = TariffId(1),
+        currency = Currency.getInstance("EUR"),
         freeSeconds = 0,
         rates = setOf(
             FixedRate(
@@ -46,7 +48,7 @@ internal class FreeMinutesCalculatorTest {
         )
 
         assertThat(
-            rentalPeriod.positions.first().positionStart,
+            rentalPeriod.positions.first().calculationStart,
             equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(10)))
         )
         assertThat(rentalPeriod.calculatedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(10))))
@@ -63,7 +65,7 @@ internal class FreeMinutesCalculatorTest {
         )
 
         assertThat(
-            rentalPeriod.positions.first().positionStart,
+            rentalPeriod.positions.first().calculationStart,
             equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(70)))
         )
         assertThat(rentalPeriod.calculatedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(70))))
@@ -78,7 +80,7 @@ internal class FreeMinutesCalculatorTest {
         )
 
         assertThat(
-            rentalPeriod.positions.first().positionStart,
+            rentalPeriod.positions.first().calculationStart,
             equalTo(Instant.ofEpochSecond(TimeUnit.HOURS.toSeconds(25) - TimeUnit.MINUTES.toSeconds(45)))
         )
         assertThat(

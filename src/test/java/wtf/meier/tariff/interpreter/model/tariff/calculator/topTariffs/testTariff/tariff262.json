@@ -1,6 +1,7 @@
 {
   "type": "SlotBasedTariff",
   "id": 1,
+  "currency": "PLN",
   "freeSeconds": 1200,
   "rates": [
     {

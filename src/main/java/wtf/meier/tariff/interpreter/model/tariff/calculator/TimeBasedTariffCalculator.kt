@@ -1,6 +1,6 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.extension.forwardBefore
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
@@ -67,7 +67,7 @@ class TimeBasedTariffCalculator(
             }
         }
 
-        return bill.toReceipt()
+        return bill.toReceipt(tariff.currency)
     }
 
 

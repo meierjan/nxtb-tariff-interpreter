@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.minus
+import wtf.meier.tariff.interpreter.helper.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.helper.serializer.RateIdSerializer
 import wtf.meier.tariff.interpreter.helper.serializer.TariffIdSerializer
 import wtf.meier.tariff.interpreter.helper.serializer.TimeZoneSerializer
@@ -27,6 +28,7 @@ sealed class Tariff {
     abstract val rates: Set<Rate>
     abstract val billingInterval: Interval?
     abstract val fairTariff: Boolean
+    abstract val currency: Currency
 
 }
 
@@ -38,6 +40,8 @@ class SlotBasedTariff(
     override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
     override val fairTariff: Boolean = false,
     val slots: Set<Slot>
 ) : Tariff() {
@@ -73,6 +77,8 @@ data class TimeBasedTariff(
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
     override val fairTariff: Boolean = false,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
     @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone,
     val timeSlots: List<TimeSlot>
@@ -118,6 +124,8 @@ data class DayBasedTariff(
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
     override val fairTariff: Boolean = false,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
     @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone
 ) : Tariff()

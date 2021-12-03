@@ -1,6 +1,6 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.extension.min
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
@@ -38,12 +38,9 @@ class DayBasedTariffCalculator(
             }
 
             currentDay = currentDay.plusDays(1)
-
-
         }
 
-        return positions.toReceipt()
-
+        return positions.toReceipt(tariff.currency)
     }
 
 }
