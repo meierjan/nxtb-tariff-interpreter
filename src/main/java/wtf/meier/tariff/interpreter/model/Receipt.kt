@@ -9,14 +9,13 @@ data class Receipt(
 ) {
 
     val price: Int by lazy {
-        positions.sumBy { it.price.credit }
+        positions.sumOf { it.price.credit }
     }
-    // TODO make start and end non-optional
 
     data class Position(
         val price: Price,
         val description: String,
-        val positionStart: Instant? = null,
-        val positionEnd: Instant? = null
+        val positionStart: Instant,
+        val positionEnd: Instant
     )
 }
