@@ -4,9 +4,9 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.rate.RateId
@@ -38,6 +38,7 @@ class SlotBasedTariffCalculatorTest {
     private val slotBasedFixedRate1 = SlotBasedTariff(
         id = TariffId(1),
         freeSeconds = 0,
+        currency = Currency.getInstance("EUR"),
         rates = setOf(
             FixedRate(
                 id = RateId(1),
@@ -52,7 +53,7 @@ class SlotBasedTariffCalculatorTest {
                 rate = RateId(1)
             ),
             SlotBasedTariff.Slot(
-                start = Interval(2, TimeUnit.HOURS),
+                start = Interval(2, HOURS),
                 end = null,
                 RateId(1)
             )
@@ -114,6 +115,7 @@ class SlotBasedTariffCalculatorTest {
     private val leipzigBasisTariff = SlotBasedTariff(
         id = TariffId(2),
         freeSeconds = 0,
+        currency = Currency.getInstance("EUR"),
         rates = setOf(
             TimeBasedRate(
                 id = RateId(1),
@@ -127,7 +129,7 @@ class SlotBasedTariffCalculatorTest {
         ),
         slots = setOf(
             SlotBasedTariff.Slot(
-                start = Interval(0, TimeUnit.HOURS),
+                start = Interval(0, HOURS),
                 end = null,
                 RateId(1)
             )
@@ -180,6 +182,7 @@ class SlotBasedTariffCalculatorTest {
     private val jansBadTariff = SlotBasedTariff(
         id = TariffId(2),
         freeSeconds = 0,
+        currency = Currency.getInstance("EUR"),
         rates = setOf(
             FixedRate(
                 id = RateId(1),
@@ -189,22 +192,22 @@ class SlotBasedTariffCalculatorTest {
         ),
         slots = setOf(
             SlotBasedTariff.Slot(
-                start = Interval(0, TimeUnit.MINUTES),
-                end = Interval(17, TimeUnit.MINUTES),
+                start = Interval(0, MINUTES),
+                end = Interval(17, MINUTES),
                 RateId(1)
             ),
             SlotBasedTariff.Slot(
-                start = Interval(17, TimeUnit.MINUTES),
-                end = Interval(34, TimeUnit.MINUTES),
+                start = Interval(17, MINUTES),
+                end = Interval(34, MINUTES),
                 RateId(1)
             ),
             SlotBasedTariff.Slot(
-                start = Interval(34, TimeUnit.MINUTES),
+                start = Interval(34, MINUTES),
                 end = null,
                 RateId(1)
             )
         ),
-        billingInterval = Interval(20, TimeUnit.MINUTES)
+        billingInterval = Interval(20, MINUTES)
     )
 
     @Test

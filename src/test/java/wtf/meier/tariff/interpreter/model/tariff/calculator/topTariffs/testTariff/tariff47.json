@@ -3,6 +3,7 @@
   "id": 1,
   "freeSeconds": 2100,
   "fairTariff": true,
+  "currency": "EUR",
   "rates": [
     {
       "type": "TimeBasedRate",

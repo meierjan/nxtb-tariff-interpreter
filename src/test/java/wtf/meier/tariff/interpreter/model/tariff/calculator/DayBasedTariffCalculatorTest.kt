@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import wtf.meier.tariff.interpreter.extension.RentalPeriod
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
@@ -22,6 +22,7 @@ internal class DayBasedTariffCalculatorTest {
 
     private val tariff = DayBasedTariff(
         id = TariffId(1),
+        currency = Currency.getInstance("EUR"),
         freeSeconds = 0,
         rates = mutableSetOf(
             FixedRate(
@@ -44,6 +45,7 @@ internal class DayBasedTariffCalculatorTest {
     private val usedomTariff = DayBasedTariff(
         id = TariffId(1),
         freeSeconds = 0,
+        currency = Currency.getInstance("EUR"),
         rates = mutableSetOf(
             FixedRate(
                 id = RateId(1),

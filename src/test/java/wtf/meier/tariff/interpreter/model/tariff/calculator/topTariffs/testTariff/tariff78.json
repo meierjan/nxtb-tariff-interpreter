@@ -3,6 +3,7 @@
   "id": 1,
   "fairTariff": true,
   "freeSeconds": 0,
+  "currency": "GBP",
   "rates": [
     {
       "type": "TimeBasedRate",
