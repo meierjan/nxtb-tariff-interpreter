@@ -32,7 +32,9 @@ class TimeBaseRateCalculator {
         return RateCalculator.CalculatedPrice(
             price = price,
             currency = rate.currency,
-            description = description
+            description = description,
+            calculationStart = rentalStart,
+            calculationEnd = rentalEnd
         )
     }
 }

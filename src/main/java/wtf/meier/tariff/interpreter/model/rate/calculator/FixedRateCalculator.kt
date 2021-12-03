@@ -9,7 +9,9 @@ class FixedRateCalculator {
         RateCalculator.CalculatedPrice(
             price = rate.price,
             currency = rate.currency,
-            description = "Fixed Price"
+            description = "Fixed Price",
+            calculationStart = rentalStart,
+            calculationEnd = rentalEnd
         )
 
 }
