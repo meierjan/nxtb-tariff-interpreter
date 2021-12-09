@@ -1,9 +1,16 @@
 {
   "type": "SlotBasedTariff",
   "id": 1,
-  "fairTariff": true,
-  "freeSeconds": 1200,
   "currency": "PLN",
+  "goodwill": [
+    {
+      "type": "FreeMinutes",
+      "duration": {
+        "timeAmount": 20,
+        "timeUnit": "MINUTES"
+      }
+    }
+  ],
   "rates": [
     {
       "type": "FixedRate",
