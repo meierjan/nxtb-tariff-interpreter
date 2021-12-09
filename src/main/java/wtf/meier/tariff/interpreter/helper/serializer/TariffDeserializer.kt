@@ -5,6 +5,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import wtf.meier.tariff.interpreter.model.goodwill.DynamicGoodwill
+import wtf.meier.tariff.interpreter.model.goodwill.FreeMinutes
+import wtf.meier.tariff.interpreter.model.goodwill.Goodwill
+import wtf.meier.tariff.interpreter.model.goodwill.StaticGoodwill
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
@@ -25,6 +29,11 @@ object TariffDeserializer {
             subclass(DayBasedTariff::class)
             subclass(TimeBasedTariff::class)
         }
+        polymorphic(Goodwill::class) {
+            subclass(FreeMinutes::class)
+            subclass(StaticGoodwill::class)
+            subclass(DynamicGoodwill::class)
+        }
     }
 
     private val format = Json {
@@ -33,5 +42,4 @@ object TariffDeserializer {
     }
 
     fun deserializeTariff(serializedTariff: String): Tariff = format.decodeFromString(serializedTariff)
-
 }
