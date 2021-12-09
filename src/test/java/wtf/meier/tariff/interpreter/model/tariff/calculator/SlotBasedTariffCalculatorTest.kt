@@ -37,7 +37,6 @@ class SlotBasedTariffCalculatorTest {
      */
     private val slotBasedFixedRate1 = SlotBasedTariff(
         id = TariffId(1),
-        freeSeconds = 0,
         currency = Currency.getInstance("EUR"),
         rates = setOf(
             FixedRate(
@@ -114,7 +113,6 @@ class SlotBasedTariffCalculatorTest {
 
     private val leipzigBasisTariff = SlotBasedTariff(
         id = TariffId(2),
-        freeSeconds = 0,
         currency = Currency.getInstance("EUR"),
         rates = setOf(
             TimeBasedRate(
@@ -181,7 +179,6 @@ class SlotBasedTariffCalculatorTest {
 
     private val jansBadTariff = SlotBasedTariff(
         id = TariffId(2),
-        freeSeconds = 0,
         currency = Currency.getInstance("EUR"),
         rates = setOf(
             FixedRate(
