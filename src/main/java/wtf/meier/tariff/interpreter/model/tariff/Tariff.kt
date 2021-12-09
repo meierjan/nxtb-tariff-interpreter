@@ -9,6 +9,7 @@ import wtf.meier.tariff.interpreter.helper.serializer.RateIdSerializer
 import wtf.meier.tariff.interpreter.helper.serializer.TariffIdSerializer
 import wtf.meier.tariff.interpreter.helper.serializer.TimeZoneSerializer
 import wtf.meier.tariff.interpreter.model.Interval
+import wtf.meier.tariff.interpreter.model.goodwill.Goodwill
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import java.time.DayOfWeek
@@ -24,25 +25,23 @@ class InvalidTariffFormatException(message: String) : RuntimeException(message)
 @Serializable
 sealed class Tariff {
     abstract val id: TariffId
-    abstract val freeSeconds: Int
     abstract val rates: Set<Rate>
     abstract val billingInterval: Interval?
-    abstract val fairTariff: Boolean
+    abstract val goodwill: Set<Goodwill>?
     abstract val currency: Currency
 
 }
 
 @Serializable
 @SerialName("SlotBasedTariff")
-class SlotBasedTariff(
+data class SlotBasedTariff(
     @Serializable(with = TariffIdSerializer::class)
     override val id: TariffId,
-    override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
-    override val fairTariff: Boolean = false,
+    override val goodwill: Set<Goodwill>? = null,
     val slots: Set<Slot>
 ) : Tariff() {
     @Serializable
@@ -73,10 +72,9 @@ class SlotBasedTariff(
 data class TimeBasedTariff(
     @Serializable(with = TariffIdSerializer::class)
     override val id: TariffId,
-    override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
-    override val fairTariff: Boolean = false,
+    override val goodwill: Set<Goodwill>? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     @Serializable(with = TimeZoneSerializer::class)
@@ -120,10 +118,9 @@ data class TimeBasedTariff(
 data class DayBasedTariff(
     @Serializable(with = TariffIdSerializer::class)
     override val id: TariffId,
-    override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
-    override val fairTariff: Boolean = false,
+    override val goodwill: Set<Goodwill>? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     @Serializable(with = TimeZoneSerializer::class)
