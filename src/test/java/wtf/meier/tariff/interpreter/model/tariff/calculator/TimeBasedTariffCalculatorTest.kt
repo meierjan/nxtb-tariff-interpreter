@@ -49,7 +49,6 @@ class TimeBasedTariffCalculatorTest {
      */
     private val tariff1 = TimeBasedTariff(
         id = TariffId(1),
-        freeSeconds = 0,
         billingInterval = null,
         currency = Currency.getInstance("EUR"),
         rates = setOf(
