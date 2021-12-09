@@ -6,10 +6,18 @@ import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class InstantTest {
+    val instantOne = Instant.ofEpochMilli(2)
+    val instantTwo = Instant.ofEpochMilli(3)
+
     @Test
     fun `test minus operator`(){
-        val difference = Instant.ofEpochMilli(1) - Instant.ofEpochSecond(0)
-        print(difference.toEpochMilli())
-        assertThat(difference.toEpochMilli(), equalTo(1))
+        val difference = instantTwo -  instantOne
+        assertThat(difference, equalTo(Instant.ofEpochMilli(1)))
+    }
+
+    @Test
+    fun min(){
+        val min = min(instantOne, instantTwo)
+        assertThat(min, equalTo(instantOne))
     }
 }
