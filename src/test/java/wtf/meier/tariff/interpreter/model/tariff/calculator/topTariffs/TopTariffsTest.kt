@@ -35,39 +35,6 @@ class topTariffsTest {
     }
 
     @Test
-    fun `test tariff 47`() {
-        PriceChartTester.testPriceChart(
-            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0047.json",
-            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff47.json",
-        )
-    }
-
-    @Test
-    fun `test tariff 55`() {
-        PriceChartTester.testPriceChart(
-            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0055.json",
-            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff55.json",
-        )
-    }
-
-    @Test
-    fun `test tariff 78`() {
-        PriceChartTester.testPriceChart(
-            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0078.json",
-            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff78.json",
-        )
-    }
-
-    @Test
-    // todo priceChart has invalid price!
-    fun `test tariff 92`() {
-        PriceChartTester.testPriceChart(
-            priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0092.json",
-            tariffPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testTariff/tariff92.json",
-        )
-    }
-
-    @Test
     fun `test tariff 165`() {
         PriceChartTester.testPriceChart(
             priceChartPath = "src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs/testData/Rate0165.json",
