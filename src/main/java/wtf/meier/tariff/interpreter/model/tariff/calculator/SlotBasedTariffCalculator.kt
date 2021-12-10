@@ -62,7 +62,7 @@ class SlotBasedTariffCalculator(
                 minOf(
                     rentalPeriod.calculatedEnd,
                     currentBillingEnd,
-                    slotStart.plus(sortedCyclicSlots[currentSlotIndex].getDuration())
+                    slotStart.plus(sortedCyclicSlots[currentSlotIndex].duration)
                 )
         }
         return positions.toReceipt(tariff.currency)
