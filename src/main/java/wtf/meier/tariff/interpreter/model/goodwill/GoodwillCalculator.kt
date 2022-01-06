@@ -10,20 +10,14 @@ object GoodwillCalculator : IGoodwillCalculator {
 
     override fun calculateGoodwill(tariff: Tariff, rentalPeriod: RentalPeriod): RentalPeriod {
         var calculatedRentalPeriod: RentalPeriod = rentalPeriod.copy()
-        tariff.goodwill?.forEach {
-            when (it) {
-                is StaticGoodwill -> calculatedRentalPeriod =
-                    StaticGoodwillcalculator.calculateGoodwill(it, calculatedRentalPeriod, tariff.currency).copy()
-                is FreeMinutes -> calculatedRentalPeriod =
-                    FreeMinutesCalculator.calculateGoodwill(it, calculatedRentalPeriod, tariff.currency).copy()
-            }
-        }
-        //todo find better way to calculate dynamicGoodwill least
-        tariff.goodwill?.forEach {
-            if (it is DynamicGoodwill) calculatedRentalPeriod =
-                DynamicGoodwillCalculator.calculateGoodwill(it, calculatedRentalPeriod, tariff.currency).copy()
-
-
+        val goodwill = tariff.goodwill
+        when (goodwill) {
+            is StaticGoodwill -> calculatedRentalPeriod =
+                StaticGoodwillcalculator.calculateGoodwill(goodwill, calculatedRentalPeriod).copy()
+            is FreeMinutes -> calculatedRentalPeriod =
+                FreeMinutesCalculator.calculateGoodwill(goodwill, calculatedRentalPeriod).copy()
+            is DynamicGoodwill -> calculatedRentalPeriod =
+                DynamicGoodwillCalculator.calculateGoodwill(goodwill, calculatedRentalPeriod).copy()
         }
         return calculatedRentalPeriod
     }

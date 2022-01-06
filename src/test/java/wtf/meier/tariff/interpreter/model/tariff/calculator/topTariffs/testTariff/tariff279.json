@@ -1,15 +1,13 @@
 {
   "type": "SlotBasedTariff",
   "id": 1,
-  "goodwill": [
-    {
-      "type": "FreeMinutes",
-      "duration": {
-        "timeAmount": 1,
-        "timeUnit": "MINUTES"
-      }
+  "goodwill": {
+    "type": "FreeMinutes",
+    "duration": {
+      "timeAmount": 1,
+      "timeUnit": "MINUTES"
     }
-  ],
+  },
   "currency": "EUR",
   "rates": [
     {

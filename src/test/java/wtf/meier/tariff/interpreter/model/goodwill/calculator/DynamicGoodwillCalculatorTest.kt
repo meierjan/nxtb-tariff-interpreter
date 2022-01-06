@@ -36,11 +36,7 @@ internal class DynamicGoodwillCalculatorTest {
             ),
         ),
         billingInterval = null,
-        goodwill = setOf(
-            DynamicGoodwill(
-                deductibleProportionInPercentage = 10f
-            )
-        )
+        goodwill = DynamicGoodwill(deductibleProportionInPercentage = 10f)
 
     )
 
@@ -48,16 +44,16 @@ internal class DynamicGoodwillCalculatorTest {
     fun `test goodWill of duration of 15 min`() {
 
         val rentalPeriod: RentalPeriod = DynamicGoodwillCalculator.calculateGoodwill(
-            dynamicGoodwill = goodwillTariff.goodwill?.first() as DynamicGoodwill,
+            dynamicGoodwill = goodwillTariff.goodwill as DynamicGoodwill,
             rentalPeriod = RentalPeriod(rentalEnd = Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(10))),
-            currency = Currency.getInstance("EUR")
         )
 
-
-        assertThat(
-            rentalPeriod.positions.first().calculationStart,
-            equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(9)))
-        )
-        assertThat(rentalPeriod.calculatedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(9))))
+        rentalPeriod.chargedGoodwill?.let {
+            assertThat(
+                it.goodwillStart,
+                equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(9)))
+            )
+        }
+        assertThat(rentalPeriod.invoicedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(9))))
     }
 }

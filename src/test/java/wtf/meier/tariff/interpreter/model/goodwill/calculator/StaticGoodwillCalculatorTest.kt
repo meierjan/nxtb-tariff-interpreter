@@ -19,27 +19,16 @@ import java.util.concurrent.TimeUnit
 internal class StaticGoodwillCalculatorTest {
 
     val goodwillTariff: Tariff = SlotBasedTariff(
-        id = TariffId(1),
-        currency = Currency.getInstance("EUR"),
-        rates = setOf(
+        id = TariffId(1), currency = Currency.getInstance("EUR"), rates = setOf(
             FixedRate(
-                id = RateId(1),
-                currency = Currency.getInstance("EUR"),
-                price = Price(2000)
+                id = RateId(1), currency = Currency.getInstance("EUR"), price = Price(2000)
             )
-        ),
-        slots = setOf(
+        ), slots = setOf(
             SlotBasedTariff.Slot(
-                start = Interval(0, TimeUnit.SECONDS),
-                end = null,
-                rate = RateId(1)
+                start = Interval(0, TimeUnit.SECONDS), end = null, rate = RateId(1)
             ),
-        ),
-        billingInterval = null,
-        goodwill = setOf(
-            StaticGoodwill(
-                duration = Interval(30, TimeUnit.MINUTES)
-            )
+        ), billingInterval = null, goodwill = StaticGoodwill(
+            duration = Interval(30, TimeUnit.MINUTES)
         )
 
     )
@@ -49,17 +38,18 @@ internal class StaticGoodwillCalculatorTest {
     fun `test goodWill of duration of 15 min`() {
 
         val rentalPeriod: RentalPeriod = StaticGoodwillcalculator.calculateGoodwill(
-            goodwill = goodwillTariff.goodwill?.first() as StaticGoodwill,
-            rentalPeriod = RentalPeriod(rentalEnd = Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15))),
-            currency = Currency.getInstance("EUR")
+            goodwill = goodwillTariff.goodwill as StaticGoodwill,
+            rentalPeriod = RentalPeriod(rentalEnd = Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15)))
         )
 
 
-        assertThat(
-            rentalPeriod.positions.first().calculationEnd,
-            equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15)))
-        )
-        assertThat(rentalPeriod.calculatedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(0))))
+        rentalPeriod.chargedGoodwill?.let {
+            assertThat(
+                it.goodwillEnd,
+                equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15)))
+            )
+        }
+        assertThat(rentalPeriod.invoicedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(0))))
     }
 
 
@@ -67,16 +57,17 @@ internal class StaticGoodwillCalculatorTest {
     fun `test goodWill of duration of 1h 15min`() {
 
         val rentalPeriod: RentalPeriod = StaticGoodwillcalculator.calculateGoodwill(
-            goodwill = goodwillTariff.goodwill?.first() as StaticGoodwill,
+            goodwill = goodwillTariff.goodwill as StaticGoodwill,
             rentalPeriod = RentalPeriod(rentalEnd = Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(75))),
-            currency = Currency.getInstance("EUR")
         )
 
 
-        assertThat(
-            rentalPeriod.positions.first().calculationStart,
-            equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(45)))
-        )
-        assertThat(rentalPeriod.calculatedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(45))))
+        rentalPeriod.chargedGoodwill?.let {
+            assertThat(
+                it.goodwillStart,
+                equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(45)))
+            )
+        }
+        assertThat(rentalPeriod.invoicedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(45))))
     }
 }

@@ -36,10 +36,8 @@ internal class FreeMinutesCalculatorTest {
             ),
         ),
         billingInterval = null,
-        goodwill = setOf(
-            FreeMinutes(
-                duration = Interval(30, TimeUnit.MINUTES)
-            )
+        goodwill = FreeMinutes(
+            duration = Interval(30, TimeUnit.MINUTES)
         )
 
     )
@@ -49,16 +47,17 @@ internal class FreeMinutesCalculatorTest {
     fun `test goodWill of duration of 15 min`() {
 
         val rentalPeriod: RentalPeriod = FreeMinutesCalculator.calculateGoodwill(
-            freeMinutes = goodwillTariff.goodwill?.first() as FreeMinutes,
+            freeMinutes = goodwillTariff.goodwill as FreeMinutes,
             rentalPeriod = RentalPeriod(rentalEnd = Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15))),
-            currency = Currency.getInstance("EUR")
         )
 
-        assertThat(
-            rentalPeriod.positions.first().calculationEnd,
-            equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15)))
-        )
-        assertThat(rentalPeriod.calculatedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15))))
+        rentalPeriod.chargedGoodwill?.let {
+            assertThat(
+                it.goodwillEnd,
+                equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15)))
+            )
+        }
+        assertThat(rentalPeriod.invoicedEnd, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(15))))
     }
 
 
@@ -66,16 +65,16 @@ internal class FreeMinutesCalculatorTest {
     fun `test goodWill of duration of 1h 15min`() {
 
         val rentalPeriod: RentalPeriod = FreeMinutesCalculator.calculateGoodwill(
-            freeMinutes = goodwillTariff.goodwill?.first() as FreeMinutes,
+            freeMinutes = goodwillTariff.goodwill as FreeMinutes,
             rentalPeriod = RentalPeriod(rentalEnd = Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(75))),
-            currency = Currency.getInstance("EUR")
         )
 
-
-        assertThat(
-            rentalPeriod.positions.first().calculationEnd,
-            equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(30)))
-        )
-        assertThat(rentalPeriod.calculatedStart, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(30))))
+        rentalPeriod.chargedGoodwill?.let {
+            assertThat(
+                it.goodwillEnd,
+                equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(30)))
+            )
+        }
+        assertThat(rentalPeriod.invoicedStart, equalTo(Instant.ofEpochSecond(TimeUnit.MINUTES.toSeconds(30))))
     }
 }
