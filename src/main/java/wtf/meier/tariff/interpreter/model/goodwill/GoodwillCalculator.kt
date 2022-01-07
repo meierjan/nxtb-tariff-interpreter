@@ -8,17 +8,12 @@ import wtf.meier.tariff.interpreter.model.tariff.Tariff
 
 object GoodwillCalculator : IGoodwillCalculator {
 
-    override fun calculateGoodwill(tariff: Tariff, rentalPeriod: RentalPeriod): RentalPeriod {
-        var calculatedRentalPeriod: RentalPeriod = rentalPeriod.copy()
-        val goodwill = tariff.goodwill
-        when (goodwill) {
-            is StaticGoodwill -> calculatedRentalPeriod =
-                StaticGoodwillcalculator.calculateGoodwill(goodwill, calculatedRentalPeriod).copy()
-            is FreeMinutes -> calculatedRentalPeriod =
-                FreeMinutesCalculator.calculateGoodwill(goodwill, calculatedRentalPeriod).copy()
-            is DynamicGoodwill -> calculatedRentalPeriod =
-                DynamicGoodwillCalculator.calculateGoodwill(goodwill, calculatedRentalPeriod).copy()
+    override fun calculateGoodwill(tariff: Tariff, rentalPeriod: RentalPeriod): RentalPeriod =
+        when (val goodwill = tariff.goodwill) {
+            is StaticGoodwill -> StaticGoodwillcalculator.calculateGoodwill(goodwill, rentalPeriod)
+            is FreeMinutes -> FreeMinutesCalculator.calculateGoodwill(goodwill, rentalPeriod)
+            is DynamicGoodwill -> DynamicGoodwillCalculator.calculateGoodwill(goodwill, rentalPeriod)
+            null -> rentalPeriod
         }
-        return calculatedRentalPeriod
-    }
+
 }
