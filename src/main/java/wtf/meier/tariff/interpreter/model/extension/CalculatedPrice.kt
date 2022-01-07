@@ -10,7 +10,11 @@ fun List<RateCalculator.CalculatedPrice>.toReceipt(
     chargedGoodwill: ChargedGoodwill?,
     currency: Currency
 ): Receipt {
-    this.map { if (it.currency !== currency) throw InconsistentCurrencyException("The tariff and rate currencies are not compatible") }
+
+    if (this.any { it.currency != currency }) {
+        throw InconsistentCurrencyException("The passed in currency and rate currencies are not compatible")
+    }
+
     var positions = this.map {
         Receipt.Position(
             price = it.price,
@@ -28,7 +32,7 @@ fun List<RateCalculator.CalculatedPrice>.toReceipt(
         )
     }
 
-    positions = if(goodwillPosition == null) positions else positions + goodwillPosition
+    positions = if (goodwillPosition == null) positions else positions + goodwillPosition
 
     return Receipt(positions = positions.sortedBy { it.positionStart }, currency = currency)
 }
