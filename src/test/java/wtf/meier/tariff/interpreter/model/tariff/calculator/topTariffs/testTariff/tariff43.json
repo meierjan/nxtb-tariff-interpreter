@@ -1,0 +1,122 @@
+{
+  "type": "SlotBasedTariff",
+  "id": 1,
+  "currency": "PLN",
+  "goodwill": {
+    "type": "FreeMinutes",
+    "duration": {
+      "timeAmount": 20,
+      "timeUnit": "MINUTES"
+    }
+  },
+  "rates": [
+    {
+      "type": "FixedRate",
+      "id": 1,
+      "currency": "PLN",
+      "price": {
+        "credit": 100
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": 2,
+      "currency": "PLN",
+      "price": {
+        "credit": 300
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": 3,
+      "currency": "PLN",
+      "price": {
+        "credit": 500
+      }
+    },
+    {
+      "type": "TimeBasedRate",
+      "id": 4,
+      "currency": "PLN",
+      "interval": {
+        "timeAmount": 1,
+        "timeUnit": "HOURS"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 700
+      },
+      "maxPrice": {
+        "credit": 2147483647
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": 5,
+      "currency": "PLN",
+      "price": {
+        "credit": 20000
+      }
+    }
+  ],
+  "billingInterval": null,
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 60,
+        "timeUnit": "MINUTES"
+      },
+      "rate": 1
+    },
+    {
+      "start": {
+        "timeAmount": 60,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 120,
+        "timeUnit": "MINUTES"
+      },
+      "rate": 2
+    },
+    {
+      "start": {
+        "timeAmount": 120,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 180,
+        "timeUnit": "MINUTES"
+      },
+      "rate": 3
+    },
+    {
+      "start": {
+        "timeAmount": 180,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 12,
+        "timeUnit": "HOURS"
+      },
+      "rate": 4
+    },
+    {
+      "start": {
+        "timeAmount": 12,
+        "timeUnit": "HOURS"
+      },
+      "end": null,
+      "rate": 5
+    }
+  ]
+}

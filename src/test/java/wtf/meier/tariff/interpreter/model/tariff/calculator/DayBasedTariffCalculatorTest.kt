@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.tariff.DayBasedTariff
@@ -21,7 +22,7 @@ internal class DayBasedTariffCalculatorTest {
 
     private val tariff = DayBasedTariff(
         id = TariffId(1),
-        freeSeconds = 0,
+        currency = Currency.getInstance("EUR"),
         rates = mutableSetOf(
             FixedRate(
                 id = RateId(1),
@@ -31,13 +32,47 @@ internal class DayBasedTariffCalculatorTest {
         ),
         // TODO: maybe make nullable for infinite
         billingInterval = Interval(100, TimeUnit.DAYS),
-        TimeZone.getTimeZone("GMT+1")
+        timeZone = TimeZone.getTimeZone("GMT+1")
     )
 
 
     @BeforeEach
     fun setup() {
         calculator = DayBasedTariffCalculator()
+    }
+
+    private val usedomTariff = DayBasedTariff(
+        id = TariffId(1),
+        currency = Currency.getInstance("EUR"),
+        rates = mutableSetOf(
+            FixedRate(
+                id = RateId(1),
+                currency = Currency.getInstance("EUR"),
+                price = Price(1500)
+            )
+        ),
+        billingInterval = (Interval(100, TimeUnit.DAYS)),
+        timeZone = TimeZone.getTimeZone("GMT+1")
+    )
+
+    // TODO dayBasedTariff revise
+    @Test
+    fun usedom() {
+        val startInstant = LocalDateTime.of(1988, 7, 29, 0, 10)
+            .atZone(tariff.timeZone.toZoneId())
+            .toInstant()
+
+        val startEnd = LocalDateTime.of(1988, 7, 30, 13, 40)
+            .atZone(tariff.timeZone.toZoneId())
+            .toInstant()
+
+        val rentalPeriod = RentalPeriod(startInstant, startEnd)
+
+        val receipt = calculator.calculate(usedomTariff, rentalPeriod)
+
+        // 2 started days
+
+        assertThat(receipt.price, equalTo(3000))
     }
 
 
@@ -52,7 +87,9 @@ internal class DayBasedTariffCalculatorTest {
             .atZone(tariff.timeZone.toZoneId())
             .toInstant()
 
-        val receipt = calculator.calculate(tariff, startInstant, startEnd)
+        val rentalPeriod = RentalPeriod(startInstant, startEnd)
+
+        val receipt = calculator.calculate(tariff, rentalPeriod)
 
         // 2 started days
 

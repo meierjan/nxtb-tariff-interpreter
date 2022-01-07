@@ -1,0 +1,246 @@
+{
+    "rate_meta": {
+        "id": 311,
+        "currency": "EUR",
+        "included_free_minutes": 0
+    },
+    "chart_meta": {
+        "limit": null,
+        "max_duration_seconds": 259290,
+        "assume_full_minute_tariff": true,
+        "fictive_lending_start_time": null,
+        "time": 327
+    },
+    "chart": [
+        {
+            "start": 1,
+            "end": 959,
+            "price": 100
+        },
+        {
+            "start": 960,
+            "end": 1859,
+            "price": 200
+        },
+        {
+            "start": 1860,
+            "end": 2759,
+            "price": 300
+        },
+        {
+            "start": 2760,
+            "end": 3659,
+            "price": 400
+        },
+        {
+            "start": 3660,
+            "end": 4559,
+            "price": 500
+        },
+        {
+            "start": 4560,
+            "end": 5459,
+            "price": 600
+        },
+        {
+            "start": 5460,
+            "end": 6359,
+            "price": 700
+        },
+        {
+            "start": 6360,
+            "end": 7259,
+            "price": 800
+        },
+        {
+            "start": 7260,
+            "end": 8159,
+            "price": 900
+        },
+        {
+            "start": 8160,
+            "end": 9059,
+            "price": 1000
+        },
+        {
+            "start": 9060,
+            "end": 9959,
+            "price": 1100
+        },
+        {
+            "start": 9960,
+            "end": 10859,
+            "price": 1200
+        },
+        {
+            "start": 10860,
+            "end": 11759,
+            "price": 1300
+        },
+        {
+            "start": 11760,
+            "end": 12659,
+            "price": 1400
+        },
+        {
+            "start": 12660,
+            "end": 86459,
+            "price": 1500
+        },
+        {
+            "start": 86460,
+            "end": 87359,
+            "price": 1600
+        },
+        {
+            "start": 87360,
+            "end": 88259,
+            "price": 1700
+        },
+        {
+            "start": 88260,
+            "end": 89159,
+            "price": 1800
+        },
+        {
+            "start": 89160,
+            "end": 90059,
+            "price": 1900
+        },
+        {
+            "start": 90060,
+            "end": 90959,
+            "price": 2000
+        },
+        {
+            "start": 90960,
+            "end": 91859,
+            "price": 2100
+        },
+        {
+            "start": 91860,
+            "end": 92759,
+            "price": 2200
+        },
+        {
+            "start": 92760,
+            "end": 93659,
+            "price": 2300
+        },
+        {
+            "start": 93660,
+            "end": 94559,
+            "price": 2400
+        },
+        {
+            "start": 94560,
+            "end": 95459,
+            "price": 2500
+        },
+        {
+            "start": 95460,
+            "end": 96359,
+            "price": 2600
+        },
+        {
+            "start": 96360,
+            "end": 97259,
+            "price": 2700
+        },
+        {
+            "start": 97260,
+            "end": 98159,
+            "price": 2800
+        },
+        {
+            "start": 98160,
+            "end": 99059,
+            "price": 2900
+        },
+        {
+            "start": 99060,
+            "end": 172859,
+            "price": 3000
+        },
+        {
+            "start": 172860,
+            "end": 173759,
+            "price": 3100
+        },
+        {
+            "start": 173760,
+            "end": 174659,
+            "price": 3200
+        },
+        {
+            "start": 174660,
+            "end": 175559,
+            "price": 3300
+        },
+        {
+            "start": 175560,
+            "end": 176459,
+            "price": 3400
+        },
+        {
+            "start": 176460,
+            "end": 177359,
+            "price": 3500
+        },
+        {
+            "start": 177360,
+            "end": 178259,
+            "price": 3600
+        },
+        {
+            "start": 178260,
+            "end": 179159,
+            "price": 3700
+        },
+        {
+            "start": 179160,
+            "end": 180059,
+            "price": 3800
+        },
+        {
+            "start": 180060,
+            "end": 180959,
+            "price": 3900
+        },
+        {
+            "start": 180960,
+            "end": 181859,
+            "price": 4000
+        },
+        {
+            "start": 181860,
+            "end": 182759,
+            "price": 4100
+        },
+        {
+            "start": 182760,
+            "end": 183659,
+            "price": 4200
+        },
+        {
+            "start": 183660,
+            "end": 184559,
+            "price": 4300
+        },
+        {
+            "start": 184560,
+            "end": 185459,
+            "price": 4400
+        },
+        {
+            "start": 185460,
+            "end": 259259,
+            "price": 4500
+        },
+        {
+            "start": 259260,
+            "end": null,
+            "price": 4600
+        }
+    ]
+}

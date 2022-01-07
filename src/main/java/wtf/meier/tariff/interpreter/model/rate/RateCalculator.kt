@@ -10,11 +10,12 @@ class RateCalculator(
     private val timeBaseRateCalculator: TimeBaseRateCalculator = TimeBaseRateCalculator(),
     private val fixedRateCalculator: FixedRateCalculator = FixedRateCalculator()
 ) {
-
     data class CalculatedPrice(
         val price: Price,
         val currency: Currency,
-        val description: String
+        val description: String,
+        val calculationStart: Instant,
+        val calculationEnd: Instant
     )
 
     fun calculate(rate: Rate, rentalStart: Instant, rentalEnd: Instant): CalculatedPrice =
