@@ -15,7 +15,7 @@ fun List<RateCalculator.CalculatedPrice>.toReceipt(
         throw InconsistentCurrencyException("The passed in currency and rate currencies are not compatible")
     }
 
-    var positions = this.map {
+    val positionsOfPrice = this.map {
         Receipt.Position(
             price = it.price,
             description = it.description,
@@ -24,7 +24,7 @@ fun List<RateCalculator.CalculatedPrice>.toReceipt(
         )
     }
 
-    val goodwillPosition = chargedGoodwill?.let {
+    val optionalGoodwillPositions = chargedGoodwill?.let {
         Receipt.Position(
             description = it.description,
             positionStart = chargedGoodwill.goodwillStart,
@@ -32,7 +32,11 @@ fun List<RateCalculator.CalculatedPrice>.toReceipt(
         )
     }
 
-    positions = if (goodwillPosition == null) positions else positions + goodwillPosition
-
-    return Receipt(positions = positions.sortedBy { it.positionStart }, currency = currency)
+    return Receipt(
+        positions = (positionsOfPrice + optionalGoodwillPositions)
+            // remove goodwill if null
+            .filterNotNull()
+            .sortedBy { it.positionStart },
+        currency = currency
+    )
 }
