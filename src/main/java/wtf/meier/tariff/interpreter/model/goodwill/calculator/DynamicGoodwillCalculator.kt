@@ -2,6 +2,7 @@ package wtf.meier.tariff.interpreter.model.goodwill.calculator
 
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.minus
+import wtf.meier.tariff.interpreter.extension.toInterval
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.goodwill.ChargedGoodwill
@@ -15,7 +16,10 @@ object DynamicGoodwillCalculator {
         rentalPeriod: RentalPeriod,
     ): RentalPeriod {
         val calculatedGoodwill = Interval(
-            ceil(rentalPeriod.duration.durationMillis() * dynamicGoodwill.deductibleProportionInPercentage / 100).toInt(),
+            ceil(
+                rentalPeriod.duration.toInterval()
+                    .durationMillis() * dynamicGoodwill.deductibleProportionInPercentage / 100
+            ).toInt(),
             TimeUnit.MILLISECONDS
         )
 
@@ -32,3 +36,5 @@ object DynamicGoodwillCalculator {
     }
 
 }
+
+

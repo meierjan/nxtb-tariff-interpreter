@@ -108,6 +108,7 @@ data class TimeBasedTariff(
 
 }
 
+
 @Serializable
 @SerialName("DayBasedTariff")
 data class DayBasedTariff(
@@ -118,5 +119,29 @@ data class DayBasedTariff(
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     @Serializable(with = TimeZoneSerializer::class)
-    val timeZone: TimeZone
-) : Tariff()
+    val timeZone: TimeZone = TimeZone.getTimeZone("GMT+01:00"),
+    val slots: Set<Slot>
+) : Tariff() {
+
+    @Serializable
+    sealed class Slot {
+        abstract val rate: RateId
+    }
+
+    @Serializable
+    @SerialName("RentalSynchronizedSlot")
+    data class RentalSynchronizedSlot(
+        val start: Interval,
+        val end: Interval? = null,
+        override val rate: RateId
+    ) : Slot()
+
+    @Serializable
+    @SerialName("DaySynchronisedSlot")
+    data class DaySynchronisedSlot(
+        override val rate: RateId,
+        val startDay: Int,
+        val endDay: Int? = null
+    ) : Slot()
+}
+
