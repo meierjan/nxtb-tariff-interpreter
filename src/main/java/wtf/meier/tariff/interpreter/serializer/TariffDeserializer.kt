@@ -34,6 +34,10 @@ object TariffDeserializer {
             subclass(StaticGoodwill::class)
             subclass(DynamicGoodwill::class)
         }
+        polymorphic(DayBasedTariff.Slot::class){
+            subclass(DayBasedTariff.DaySynchronisedSlot::class)
+            subclass(DayBasedTariff.RentalSynchronizedSlot::class)
+        }
     }
 
     private val format = Json {
