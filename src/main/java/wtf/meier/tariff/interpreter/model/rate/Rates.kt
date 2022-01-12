@@ -2,9 +2,9 @@ package wtf.meier.tariff.interpreter.model.rate
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import java.util.*
 
 // changed from inline to data class, because inline classes are unsupported by kotlin serialization
@@ -26,10 +26,10 @@ data class TimeBasedRate(
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     val interval: Interval,
-    val basePrice: Price,
+    val basePrice: Price = Price(0),
     val pricePerInterval: Price,
-    val maxPrice: Price,
-    val minPrice: Price
+    val maxPrice: Price = Price(Integer.MAX_VALUE),
+    val minPrice: Price = Price(0)
 ) : Rate()
 
 @Serializable

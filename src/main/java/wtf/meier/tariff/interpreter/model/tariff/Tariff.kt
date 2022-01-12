@@ -36,7 +36,7 @@ sealed class Tariff {
 data class SlotBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
+    override val billingInterval: Interval? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     override val goodwill: Goodwill? = null,
@@ -69,7 +69,7 @@ data class SlotBasedTariff(
 data class TimeBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
+    override val billingInterval: Interval?=null,
     override val goodwill: Goodwill? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
@@ -114,7 +114,7 @@ data class TimeBasedTariff(
 data class DayBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
+    override val billingInterval: Interval? = null,
     override val goodwill: Goodwill? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
