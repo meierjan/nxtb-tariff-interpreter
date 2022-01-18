@@ -1,77 +1,73 @@
 # Tariff Interpreter
 
-___
-This Interpreter is a reverence implementation for computing a JSON formatted bike-sharing tariff model.
+This Interpreter is a reference implementation for computing a JSON formatted bike-sharing tariff model. The tariff
+model is designed to be able to represent as many types of tariffs as possible and to have a modular structure. Thus, it
+is possible to calculate as many tariffs as possible with a single tariff interpreter and at the same time ensure a
+uniform format. In addition, a kind of receipt is issued at the end thanks to a flexible slot system. Thus, the
+composition of the travel costs is broken down as transparently as possible for the end customer.
 
 ## Contents
 
-___
-
-* [Why this interpreter](#why-this-tariff-schema)
 * [General Interpreter Operation](#general-interpreter-operation)
-* [Tariff JSON Schemas](#tariff-json-schema)
-
-## Why this Tariff-Schema
-
-___
-There are two main reasons why the creation of a new pricing model has begun:
-
-* our current style for represent price tariffs are functions. On the one hand, this has the disadvantage that it leads
-  to inconsistencies between the tariffs and, on the other hand, it is difficult to create and read a tariff.
-* The old model was not able to provide a transparent breakdown of costs incurred similar to a receipt.
-
-These points were tried to improve specifically.
+* [Overview JSON Schemas](#overview-json-schema)
 
 ## General Interpreter Operation
 
-___
-The Interpreter requires a [Tariff JSON Object](#tariff-json-schema) and a rental period.
+This section will be added when the interface is built.
 
-## Tariff JSON-Schema
+## Overview JSON-Schema
 
-___
-Basically, there are three types of tariffs:
+The modular tariff model is designed in such a way that there are three basic types of tariffs. When creating a tariff,
+you have to choose one. It is not possible to mix the tariffs. To decide which tariff is the right one, you can ask
+yourself the following questions:
 
-* [SlotBasedTariff:](#slotbasedtariff)
+* Is my tariff distance dependent?
 
-This type of tariff can represent tariff that depend only on the duration of a rental.
+  -> Then this model is unfortunately not the right one for you, because only tariffs that are time based can be
+  implemented.
 
-* [DayBasedTariff:](#daybasedtariff)
 
-  These tariffs depend not only on the rental period, but also on the number of days started.
-* [TimeBasedTariff:](#timebasedtariff)
+* Is my tariff exclusively dependent on the time driven and not on the time of day or the number of days driven?
 
-  These tariffs depend not only on the rental period, but also on the time of day. It is important to cover a whole
-  week.
+  -> Then your tariff is a [SlotBasedTariff](#slotbasedtariff).
 
-To make it as simple as possible, all tariffs consist of a modular principle. This allows you to build up your tariff by
-adding slots and rates to your tariff
+
+* Does my tariff depend not only on the duration of the trip, but also on the time of day (e.g. you pay more if you
+  travel between eight and nine than if you travel between ten and eleven)?
+
+  -> Then your tariff is a [TimeBasedTariff](#timebasedtariff).
+
+
+* Is my tariff not only based on the time I ride, but also on the number of days I ride (e.g. if I rent a bike for two
+  days, the price per day is more expensive than if I rent the bike for a week)?
+
+  -> Then your tariff is a [DayBasedTariff](#daybasedtariff).
+
+All tariffs are based on a modular slot system. The difference between the three tariff models is only the definition of
+the slots and the calling of the slots. Each slot must be assigned a rate. The rate is used for the actual calculation
+of the price. There are also different types of rates:
+
+* The [FixedRate](#fixedrate) is the simpler form, with which one can specify a fixed amount, which is computed, as soon
+  as this Slot is called.
+
+
+* With the [TimeBasedRate](#timebasedrate) you can define an interval in which a fixed amount is calculated. With each
+  repetition of this interval a fixed amount is added to it. The interval does not have to be completely finished, the
+  amount is added when entering the interval.
 
 ### SlotBasedTariff
 
-___
+A SlotBasedTariff is structured in such a way that the duration of the trip is split into slots. The slots must start at
+zero and continue seamlessly, because all slots are used until the end of the trip to calculate the final price. The
+price is calculated for each slot individually and then added up.
 
-| Field Name      | Required |                Type                | Defines                                                                           |
-|-----------------|:--------:|:----------------------------------:|-----------------------------------------------------------------------------------|
-| type            |   Yes    |               String               | Necessary to identify the tariff type. In this case 'SlotBasedTariff              |
-| id              |   Yes    |                Long                | Unique identifier of the tariff                                                   |
-| currency        |   Yes    |               String               | Currency used for the rental [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
-| goodwill        | Optional |       [Goodwill](#goodwill)        | Object to add a goodwill defined                                                  |
-| billingInterval | Optional |       [Interval](#interval)        | Creates a loop to reset the credit period                                         |
-| rates           |   Yes    |      Array of [Rates](#rate)       | Array that contains all rates of a tariff                                         |
-| slots           |   Yes    | Array of [Slots](#slot-based-slot) | Array that contains all slots of a tariff                                         |
-
-###### Example
+###### Example 1
 
 ```JSON
 {
   "type": "SlotBasedTariff",
   "id": 1,
   "currency": "EUR",
-  "billingInterval": {
-    "timeAmount": 1,
-    "timeUnit": "DAYS"
-  },
   "rates": [
     {
       "type": "FixedRate",
@@ -86,14 +82,11 @@ ___
       "id": 3,
       "currency": "EUR",
       "interval": {
-        "timeAmount": 1,
-        "timeUnit": "HOURS"
+        "timeAmount": 90,
+        "timeUnit": "Minutes"
       },
       "pricePerInterval": {
         "credit": 100
-      },
-      "maxPrice": {
-        "credit": 1500
       }
     }
   ],
@@ -120,49 +113,91 @@ ___
 }
 ```
 
-* For a rental period of 20 minutes you pay 1€.
-* For a rental period of 2 hours and 45 minutes you pay 2€
+This tariff has two slots with an associated rate. The first slot begins at the start of the trip and covers the first
+two hours. It does not matter if the bike is rented for ten minutes or two hours. During this time, one euro is charged.
+The second slot starts at two hours and is not limited. The TimeBasedRate belongs to this slot. If you now ride for
+three hours, one euro from the second slot is added to the one euro from the first slot, because the interval was
+started once. If you travel for five hours, three euros from the second slot are added to the one euro from the first
+slot, because the interval was started three times.
 
-  100 for the first 2 hours (fixedRate)
+It is also possible to define a **billing interval**. This causes that after this interval the slots are calculated from
+the beginning.
 
-  \+ 100 for the started interval (45min)
+###### Example 2
 
-  = 200
+```JSON
+{
+  "type": "SlotBasedTariff",
+  "id": 1,
+  "currency": "EUR",
+  "billingInterval": {
+    "timeAmount": 5,
+    "timeUnit": "HOURS"
+  },
+  "rates": [
+    {
+      "type": "FixedRate",
+      "id": 2,
+      "currency": "EUR",
+      "price": {
+        "credit": 100
+      }
+    },
+    {
+      "type": "TimeBasedRate",
+      "id": 3,
+      "currency": "EUR",
+      "interval": {
+        "timeAmount": 90,
+        "timeUnit": "MINUTES"
+      },
+      "pricePerInterval": {
+        "credit": 100
+      }
+    }
+  ],
+  "slots": [
+    {
+      "rate": 2,
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 2,
+        "timeUnit": "HOURS"
+      }
+    },
+    {
+      "rate": 3,
+      "start": {
+        "timeAmount": 2,
+        "timeUnit": "HOURS"
+      }
+    }
+  ]
+}
+```
 
-* For a rental period of 1 day and 30minutes you pay 17€
-
-  100 for the first 2 hours
-
-  \+ 1500 (maxPrice) for the second slot
-
-  \+ 100 for the last 30 minutes (it starts again with the first slot because the billingInterval was exceeded)
-
-* = 1700
-
-#### Slot Based Slot
-
-| Field Name | Required  |         Type          | Defines                     |
-|------------|:---------:|:---------------------:|-----------------------------|
-| rate       |    Yes    |         Long          | Unique identifier of a rate |
-| start      |    Yes    | [Interval](#interval) | Start-time for slot         |
-| end        | Optional  | [Interval](#interval) | End-time for slot           |
+Up to a travel time of five hours, this rate is calculated identically to [Example 1](#example-1). After 5 hours, the
+first slot is started again and added up. This means that for a trip of eight hours, one euro from the first slot and
+one euro from the second slot are added to the four euros from the first billing interval. This is repeated with each
+subsequent run of a billing interval.
 
 ### DayBasedTariff
 
----
+The DayBasedTariff can consist of two different types of slots. Only one type of slots is used for calculation. Which
+type is used depends on the rental period. Both types can be used in one tariff.
 
-| Field Name      | Required |                Type                | Defines                                                                           |
-|-----------------|:--------:|:----------------------------------:|-----------------------------------------------------------------------------------|
-| type            |   Yes    |               String               | Necessary to identify the tariff type. In this case 'DayBasedTariff'              |
-| id              |   Yes    |                Long                | Unique identifier of a tariff                                                     |
-| currency        |   Yes    |               String               | Currency used for the rental [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
-| timeZone        |   Yes    |               String               | The time zone where the customer is locate (GMT/UTC/UT+prefix)                    |
-| goodwill        | Optional |       [Goodwill](#goodwill)        | Object to add a goodwill defined                                                  |
-| billingInterval | Optional |       [Interval](#interval)        | Generates a loop to reset the credit period                                       |
-| rates           |   Yes    |      Array of [Rates](#rate)       | Array that contains all rates of a tariff                                         |
-| slots           |   Yes    | Array of [Slots](#day-based-slots) | Array that contains all slots of a tariff                                         |                                                                                                           |
+There are the following slot types:
 
-###### Example
+* RentalSynchronizedSlots are identical to the slots of the SlotBasedTariff and are calculated in the same way.*
+
+
+* The DaySynchronizedSlots are dependent on the number of days driven. So you can realize a cheaper daily rate for a
+  longer rental period. Exactly one slot is used for the calculation of the price.
+
+###### Example 3
 
 ```Json
 {
@@ -170,13 +205,6 @@ ___
   "id": 1,
   "currency": "EUR",
   "timeZone": "GMT+1",
-  "goodwill": {
-    "type": "StaticGoodwill",
-    "duration": {
-      "timeAmount": 10,
-      "timeUnit": "MINUTES"
-    }
-  },
   "rates": [
     {
       "type": "TimeBasedRate",
@@ -238,70 +266,25 @@ ___
 }
 ```
 
-* For a rental period of 95 minutes you pay 3€ (95 minutes - 10 minutes staticGoodwill = 85 minutes -> 3 * 100)
-* For a rental period from Monday 7 am to Monday 5 pm you pay 8 €.
-    * the duration is longer than 3 hours -> the first slot is not usable.
-    * The count of days rented is one -> the second slot is usable -> 1 * 8€
-* For a rental period from Monday 5 pm to Tuesday 3 am you pay 16 €.
-    * the duration is longer than 3 hours -> the first slot is not usable.
-    * The count of days rented is two -> the second slot is usable -> 2 * 8€
-* For a rental period from Monday 5 pm to Wednesday 6am am you pay 21€.
-    * the duration is longer than 3 hours -> the first slot is not usable.
-    * the duration is longer than 2 Days -> the second slot is not usable.
-    * The count of days rented is three -> the second slot is usable ->  3 * 7€
-
-#### Day based Slots
-
-There are basically two kinds of slots. You can mix these kinds in a tariff.
-
-* [RentalSynchronizedSlot](#slot-based-slot)
-
-  These Slots are absolutely identically to the [Slot based Slots](#slot-based-slot). The price calculation depends only
-  on the rental period.
-* [DaySynchronizedSlot](#daysynchronizedslot)
-
-  This type of slot depends on the rental period and the number of days rented. So you can make the daily price
-  depending on the number of rented days. All days are charged with the same slot and rate. You must only add the type
-  field with the value 'RentalSynchronizedSlot'
-
-##### DaySynchronizedSlot
-
-| Field Name | Required |  Type  | Defines                                                                 |
-|------------|:--------:|:------:|-------------------------------------------------------------------------|
-| type       |   Yes    | String | Necessary to identify the slot type. In this case 'DaySynchronizedSlot' |
-| rate       |   Yes    |  Long  | Unique identifier of a rate                                             |
-| startDay   |   Yes    |  Int   | Minimum total time in days to apply this slot                           | 
-| endDay     | Optional |  Int   | Maximum total time in days to apply this slot                           |
-
-###### Example
-
-```Json
-{
-  "type": "DaySynchronizedSlot",
-  "rate": 1,
-  "startDay": 1,
-  "endDay": 3
-}
-```
-
-If the number of days rented is between 1 and 3, rate 1 is charged for each day.
+The tariff includes both types of slots. Therefore, the type of calculation depends on the duration of the rental. Up to
+a rental period of four hours, the calculation is performed according to the RenalSynchronizedSlots. This happens
+identically as with the SlotBasedTariff. So there can be a maximum cost of 3 Euro. If the rental duration is greater
+than five hours, the price is calculated according to the RentalSynchronizedSlots. Which slot is used for the
+calculation depends on the number of days in use. A day is always from 0 to 24 o'clock. So a rental period from 12
+o'clock to 7 o'clock is considered as two days. With two days the second slot is taken for the calculation with the rate
+3 with a price per day of 8 euros. Thus, two days cost 16 euros. A rental period from Monday to Saturday will be
+calculated as six days. The appropriate slot is the last with the associated rate four and a cost of 7 euros per day.
+Thus, the cost is 42 euros.
 
 ### TimeBasedTariff
 
-___
+A TimeBasedTariff is also composed of individual slots. However, the calculation does not start with the first slot, but
+with the one corresponding to the start time. All slots have a start time and an end time. These times always refer to a
+week and consist of a weekday and a time. The slots together must cover a whole week. As with the SlotBasedTariff, a
+rate is also assigned to these slots. The calculation works similarly to a SlotBasedTariff, except that the slots
+matching the time of day are picked out.
 
-| Field Name      | Required |              Type               | Defines                                                                           |
-|-----------------|:--------:|:-------------------------------:|-----------------------------------------------------------------------------------|
-| type            |   Yes    |             String              | Necessary to identify the tariff type. In this case 'TimeBasedTariff'             |
-| id              |   Yes    |              Long               | Unique identifier of the tariff                                                   |
-| currency        |   Yes    |             String              | Currency used for the rental [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
-| timeZone        |   Yes    |             String              | The time zone where the customer is locate (GMT/UTC/UT+prefix)                    |
-| goodwill        | Optional |      [Goodwill](#goodwill)      | Object to add a goodwill defined                                                  |
-| billingInterval | Optional |      [Interval](#interval)      | Generates a loop to reset the credit period                                       |
-| rates           |   Yes    |     Array of [Rates](#rate)     | Array that contains all rates of a tariff                                         |
-| timeSlots       |   Yes    | Array of [TimeSlots](#timeslot) | Defines day time dependent slots                                                  |
-
-###### Example
+###### Example 4
 
 ```Json
 {
@@ -309,13 +292,6 @@ ___
   "id": 1,
   "currency": "EUR",
   "timeZone": "GMT+1",
-  "goodwill": {
-    "type": "FreeMinutes",
-    "duration": {
-      "timeAmount": 5,
-      "timeUnit": "MINUTES"
-    }
-  },
   "rates": [
     {
       "type": "FixedRate",
@@ -365,180 +341,21 @@ ___
 }
 ```
 
-* If your rental is from Monday 8am to Wednesday 10pm you pay once 1€.
-* If you rent from Friday 10pm to Sunday 10am you pay once 2€.
-* If you rent from Monday 8am to Saturday 10am, you pay €3 because you cut both time periods.
+The tariff consists of two slots. The first one starts Friday 4pm and ends Monday 5am and has a FixedRate assigned,
+which charges two Euros. The second slot starts Monday 5am and ends Friday 4pm and has a FixedRate assigned, which
+charges one euro. A rental from Tuesday 8am to Saturday 8am will be charged three Euros, as both slots are cut. With a
+rental period of exactly two weeks and a start time of Monday 10 am, both slots will be charged exactly twice and there
+will be a cost of 6 euros.
 
-#### TimeSlot
 
-| Field Name | Required |      Type      | Defines                            |
-|------------|:--------:|:--------------:|------------------------------------|
-| rate       |   Yes    |      Long      | Unique identifier of a rate        |
-| from       |   Yes    | [Time](#time)  | Defines start time for a time slot | 
-| to         |   Yes    | [Time](#time)  | Defines end time for a time slot   | 
+#### FixedRate
 
-###### Example
-
-```Json
-{
-  "rate": 1,
-  "from": {
-    "day": "MONDAY",
-    "hour": "5",
-    "minutes": 30
-  },
-  "to": {
-    "day": "FRIDAY",
-    "hour": "18",
-    "minutes": 45
-  }
-}
-```
-
-##### Time
-
-| Field Name | Required |                                      Type                                       | Defines                      |
-|------------|:--------:|:-------------------------------------------------------------------------------:|------------------------------|
-| day        |   Yes    | [DayOfWeek](https://docs.oracle.com/javase/8/docs/api/java/time/DayOfWeek.html) | Defines day of week          |
-| hour       |   Yes    |                                       Int                                       | Defines hour of a day (1-24) |
-| minutes    |   Yes    |                                       Int                                       | Defines minutes of a hour    |
-
-###### # Example
-
-```Json
-{
-  "day": "MONDAY",
-  "hour": "5",
-  "minutes": 30
-}
-```
-
-### Objects used in all Tariffs
-
-___
-
-#### Goodwill
-
-Basically there are three types you can choose for a goodwill:
-
-* [StaticGoodwill:](#staticgoodwill)
-
-  Subtracts a static time from the rental duration from behind
-* [DynamicGoodwill:](#dynamicgoodwill)
-
-  Subtracts a dynamic time from the rental duration from behind
-* [FreeMinutes:](#freeminutes)
-
-Subtracts a static time from the rental period from the start
-
-##### StaticGoodwill
-
-| Field Name | Required |         Type          | Defines                                                               |
-|------------|:--------:|:---------------------:|-----------------------------------------------------------------------|
-| type       |   Yes    |        String         | Necessary to identify the goodwill type. In this case 'StaticGoodwill |
-| duration   |   Yes    | [Interval](#interval) | Static time amount of time deducted from the end of the rent          |
-
-###### Example
-
-```Json
-{
-  "type": "StaticGoodwill",
-  "duration": {
-    "timeAmount": 100,
-    "timeUnit": "SECONDS"
-  }
-}
-```
-
-##### DynamicGoodwill
-
-| Field Name                       | Required |  Type  | Defines                                                                  |
-|----------------------------------|:--------:|:------:|--------------------------------------------------------------------------|
-| type                             |   Yes    | String | Necessary to identify the goodwill type. In this case 'DynamicGoodwill'  |
-| deductibleProportionInPercentage |   Yes    | Float  | Dynamic percentage value  deducted from the end of the rent              |
-
-###### Example:
-
-```Json
-{
-  "type": "DynamicGoodwill",
-  "deductibleProportionInPercentage": 10.0
-}
-```
-
-So 10% of the rental period will be deducted
-
-##### FreeMinutes
-
-| Field Name | Required |         Type          | Defines                                                              |
-|------------|:--------:|:---------------------:|----------------------------------------------------------------------|
-| type       |   Yes    |        String         | Necessary to identify the goodwill type. In this case 'FreeMinutes'  |
-| duration   |   Yes    | [Interval](#interval) | Static time amount of time deducted from the start of the rent       |
-
-```Json
-{
-  "type": "FreeMinutes",
-  "duration": {
-    "timeAmount": 10,
-    "timeUnit": "MINUTES"
-  }
-}
-```
-
-#### Interval
-
-| Field Name | Required |                                                   Type                                                    | Defines                                                                                                                               |
-|------------|:--------:|:---------------------------------------------------------------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------|
-| timeAmount |   Yes    |                                                    Int                                                    | Defines time amount                                                                                                                   |
-| timeUnit   |   Yes    | [String](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/TimeUnit.html) | Defines [time unit](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/TimeUnit.html) for the interval |
-
-###### Example
-
-```Json
-{
-  "timeAmount": 3,
-  "timeUnit": "HOURS"
-}
-```
-
-### Price
-
-| Field Name | Required | Type | Defines                   |
-|------------|:--------:|:----:|---------------------------|
-| credit     |   Yes    | Int  | Defines the price amount  |
-
-###### Example
-
-```JSON
-{
-  "currency": "EUR",
-  "price": {
-    "credit": 100
-  }
-}
-```
-
-This means __1€__ not ~~100€~~
-
-#### Rate
-
-Basically there are two types of __rates__, and you can mix all rates in the rate array of a tariff.
-
-* [FixedRate](#fixedrate)
-
-  The price of a FixedRate is calculated once per started slot.
-* [TimeBasedRate:](#timebasedrate)
-
-  The price for this rate depends on the rental period of the rate.
-
-##### FixedRate
-
-| Field Name | Required |      Type       | Defines                                                                            |
-|------------|:--------:|:---------------:|------------------------------------------------------------------------------------|
-| type       |   Yes    |     String      | Necessary to identify the slot type. In this case 'FixedRate'                      |
-| id         |   Yes    |      Long       | Unique identifier of this rate                                                     | 
-| currency   |   Yes    |     String      | Currency used to pay the rate [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
-| price      |   Yes    | [Price](#price) | Rate price                                                                         | 
+| Field Name | Required |  Type  | Defines                                                                            |
+|------------|:--------:|:------:|------------------------------------------------------------------------------------|
+| type       |   Yes    | String | Necessary to identify the slot type. In this case 'FixedRate'                      |
+| id         |   Yes    |  Long  | Unique identifier of this rate                                                     | 
+| currency   |   Yes    | String | Currency used to pay the rate [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
+| price      |   Yes    | Price  | Rate price                                                                         | 
 
 ###### Example
 
@@ -557,16 +374,16 @@ The duration in this slot can be ignored. When this slot is started, 3€ will b
 
 #### TimeBasedRate
 
-| Field Name       | Required |         Type          | Defines                                                                            |
-|------------------|:--------:|:---------------------:|------------------------------------------------------------------------------------|
-| type             |   Yes    |        String         | Necessary to identify the slot type. In this case 'TimeBasedRate'                  |
-| id               |   Yes    |         Long          | Unique identifier of this rate                                                     | 
-| currency         |   Yes    |        String         | Currency used to pay the rate [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
-| basePrice        | Optional |    [Price](#price)    | Price calculated per started slot                                                  |
-| interval         |   Yes    | [Interval](#interval) | Interval in which the price of this rate will reapplied                            |
-| pricePerInterval |   Yes    |    [Price](#price)    | Price calculated per interval                                                      | 
-| maxPrice         | Optional |    [Price](#price)    | Maximal price for this rate                                                        |
-| minPrice         | Optional |    [Price](#price)    | Minimal price for this rate                                                        |
+| Field Name       | Required |  Type  | Defines                                                                            |
+|------------------|:--------:|:------:|------------------------------------------------------------------------------------|
+| type             |   Yes    | String | Necessary to identify the slot type. In this case 'TimeBasedRate'                  |
+| id               |   Yes    |  Long  | Unique identifier of this rate                                                     | 
+| currency         |   Yes    | String | Currency used to pay the rate [(ISO 4217)](https://de.wikipedia.org/wiki/ISO_4217) |
+| basePrice        | Optional | Price  | Price calculated per started slot                                                  |
+| interval         |   Yes    | Price  | Interval in which the price of this rate will reapplied                            |
+| pricePerInterval |   Yes    | Price  | Price calculated per interval                                                      | 
+| maxPrice         | Optional | Price  | Maximal price for this rate                                                        |
+| minPrice         | Optional | Price  | Minimal price for this rate                                                        |
 
 ###### Example
 
@@ -595,13 +412,64 @@ The duration in this slot can be ignored. When this slot is started, 3€ will b
 ```
 
 * For the rental of 10 minutes in this slot, you will pay 4€ -> The calculated price is smaller than the minPrice (200
-  basePrice + 1 * 100 pricePerInterval < 400 minPrice)
+  basePrice + 1 x 100 pricePerInterval < 400 minPrice)
 * For the rental of 38 minutes in this slot, you will pay 5€
 
   200 basePrice
 
-  \+ two times a full interval + 1 started interval -> 3 * 100
-
+  \+ two times a full interval + 1 started interval -> 3 x 100
   = 500
 * For the rental of 140min in this slot, you will pay 10€ -> The calculated price is bigger then the maxPrice (200
-  basePrice + 10 * 100 pricePerInterval > 1000 maxPrice)
+  basePrice + 10 x 100 pricePerInterval > 1000 maxPrice)
+
+
+### Goodwill
+
+To give a tariff a discount, you can add a Goodwill object to each type of tariff. There are three different types of
+goodwill. All types are deducted from the rental period before the actual calculation and appear on the receipt.
+
+There are the following types:
+
+#### StaticGoodwill
+
+Subtracts a static time from the rental duration from behind
+
+```Json
+{
+  "type": "StaticGoodwill",
+  "duration": {
+    "timeAmount": 100,
+    "timeUnit": "SECONDS"
+  }
+}
+```
+
+100 seconds are deducted
+
+#### DynamicGoodwill
+
+Subtracts a dynamic time from the rental duration from behind
+
+ ```Json
+{
+  "type": "DynamicGoodwill",
+  "deductibleProportionInPercentage": 10.0
+}
+```
+
+10% of the rental period will be deducted
+
+#### FreeMinutes
+
+Subtracts a static time from the rental period from the start
+
+```Json
+{
+  "type": "FreeMinutes",
+  "duration": {
+    "timeAmount": 10,
+    "timeUnit": "MINUTES"
+  }
+}
+```
+10 minutes are deducted
