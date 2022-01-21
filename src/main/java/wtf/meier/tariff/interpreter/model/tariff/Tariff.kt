@@ -10,6 +10,7 @@ import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.serializer.TimeZoneSerializer
+import wtf.meier.tariff.interpreter.IVisitor
 import java.time.DayOfWeek
 import java.time.Instant
 import java.util.*
@@ -29,24 +30,25 @@ sealed class Tariff {
     abstract val goodwill: Goodwill?
     abstract val currency: Currency
 
+    abstract fun accept(visitor: IVisitor)
 }
 
 @Serializable
 @SerialName("SlotBasedTariff")
 data class SlotBasedTariff(
-    override val id: TariffId,
-    override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
-    @Serializable(with = CurrencySerializer::class)
-    override val currency: Currency,
-    override val goodwill: Goodwill? = null,
-    val slots: Set<Slot>
+        override val id: TariffId,
+        override val rates: Set<Rate>,
+        override val billingInterval: Interval?,
+        @Serializable(with = CurrencySerializer::class)
+        override val currency: Currency,
+        override val goodwill: Goodwill? = null,
+        val slots: Set<Slot>
 ) : Tariff() {
     @Serializable
     data class Slot(
-        val start: Interval,
-        val end: Interval?,
-        val rate: RateId
+            val start: Interval,
+            val end: Interval?,
+            val rate: RateId
     ) {
         fun matches(start: Instant, end: Instant): Boolean {
             val duration = end.toEpochMilli() - start.toEpochMilli()
@@ -58,8 +60,20 @@ data class SlotBasedTariff(
             return t1 <= duration
         }
 
+        fun accept(visitor: IVisitor) {
+            visitor.visitSlot(this)
+        }
+
         val duration: Interval
             get() = end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
+    }
+
+    override fun accept(visitor: IVisitor) {
+        visitor.visitSlotBasedTariff(this)
+        rates.forEach { it.accept(visitor) }
+        slots.forEach { it.accept(visitor) }
+        billingInterval?.accept(visitor)
+        goodwill?.accept(visitor)
     }
 
 }
@@ -67,56 +81,56 @@ data class SlotBasedTariff(
 @Serializable
 @SerialName("TimeBasedTariff")
 data class TimeBasedTariff(
-    override val id: TariffId,
-    override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
-    override val goodwill: Goodwill? = null,
-    @Serializable(with = CurrencySerializer::class)
-    override val currency: Currency,
-    @Serializable(with = TimeZoneSerializer::class)
-    val timeZone: TimeZone,
-    val timeSlots: List<TimeSlot>
+        override val id: TariffId,
+        override val rates: Set<Rate>,
+        override val billingInterval: Interval?,
+        override val goodwill: Goodwill? = null,
+        @Serializable(with = CurrencySerializer::class)
+        override val currency: Currency,
+        @Serializable(with = TimeZoneSerializer::class)
+        val timeZone: TimeZone,
+        val timeSlots: List<TimeSlot>
 ) : Tariff() {
     @Serializable
     data class TimeSlot(
-        val from: Time,
-        val to: Time,
-        val rate: RateId
+            val from: Time,
+            val to: Time,
+            val rate: RateId
     ) {
         @Serializable
         data class Time(
-            val day: DayOfWeek,
-            val hour: Int,
-            val minutes: Int
+                val day: DayOfWeek,
+                val hour: Int,
+                val minutes: Int
         ) : Comparable<Time> {
             override fun compareTo(other: Time): Int =
-                if (day == other.day) {
-                    if (hour == other.hour) {
-                        if (minutes == other.minutes) {
-                            0
+                    if (day == other.day) {
+                        if (hour == other.hour) {
+                            if (minutes == other.minutes) {
+                                0
+                            } else {
+                                minutes.compareTo(other.minutes)
+                            }
                         } else {
-                            minutes.compareTo(other.minutes)
+                            hour.compareTo(other.hour)
                         }
                     } else {
-                        hour.compareTo(other.hour)
+                        day.compareTo(other.day)
                     }
-                } else {
-                    day.compareTo(other.day)
-                }
         }
+
+        fun accept(visitor: IVisitor) {
+            visitor.visitTimeSlot(this)
+        }
+
+    }
+
+    override fun accept(visitor: IVisitor) {
+        visitor.visitTimeBasedTariff(this)
+        timeSlots.forEach { it.accept(visitor) }
+        rates.forEach { it.accept(visitor) }
+        goodwill?.accept(visitor)
+        billingInterval?.accept(visitor)
     }
 
 }
-
-@Serializable
-@SerialName("DayBasedTariff")
-data class DayBasedTariff(
-    override val id: TariffId,
-    override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
-    override val goodwill: Goodwill? = null,
-    @Serializable(with = CurrencySerializer::class)
-    override val currency: Currency,
-    @Serializable(with = TimeZoneSerializer::class)
-    val timeZone: TimeZone
-) : Tariff()
