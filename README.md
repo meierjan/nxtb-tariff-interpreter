@@ -38,10 +38,7 @@ yourself the following questions:
   -> Then your tariff is a [TimeBasedTariff](#timebasedtariff).
 
 
-* Is my tariff not only based on the time I ride, but also on the number of days I ride (e.g. if I rent a bike for two
-  days, the price per day is more expensive than if I rent the bike for a week)?
 
-  -> Then your tariff is a [DayBasedTariff](#daybasedtariff).
 
 All tariffs are based on a modular slot system. The difference between the three tariff models is only the definition of
 the slots and the calling of the slots. Each slot must be assigned a rate. The rate is used for the actual calculation
@@ -184,97 +181,6 @@ first slot is started again and added up. This means that for a trip of eight ho
 one euro from the second slot are added to the four euros from the first billing interval. This is repeated with each
 subsequent run of a billing interval.
 
-### DayBasedTariff
-
-The DayBasedTariff can consist of two different types of slots. Only one type of slots is used for calculation. Which
-type is used depends on the rental period. Both types can be used in one tariff.
-
-There are the following slot types:
-
-* RentalSynchronizedSlots are identical to the slots of the SlotBasedTariff and are calculated in the same way.*
-
-
-* The DaySynchronizedSlots are dependent on the number of days driven. So you can realize a cheaper daily rate for a
-  longer rental period. Exactly one slot is used for the calculation of the price.
-
-###### Example 3
-
-```Json
-{
-  "type": "DayBasedTariff",
-  "id": 1,
-  "currency": "EUR",
-  "timeZone": "GMT+1",
-  "rates": [
-    {
-      "type": "TimeBasedRate",
-      "id": 2,
-      "currency": "EUR",
-      "interval": {
-        "timeAmount": 30,
-        "timeUnit": "MINUTES"
-      },
-      "pricePerInterval": {
-        "credit": 100
-      },
-      "maxPrice": {
-        "credit": 300
-      }
-    },
-    {
-      "type": "FixedRate",
-      "id": 3,
-      "currency": "EUR",
-      "price": {
-        "credit": 800
-      }
-    },
-    {
-      "type": "FixedRate",
-      "id": 4,
-      "currency": "EUR",
-      "price": {
-        "credit": 700
-      }
-    }
-  ],
-  "slots": [
-    {
-      "type": "RentalSynchronizedSlot",
-      "rate": 2,
-      "start": {
-        "timeAmount": 0,
-        "timeUnit": "NANOSECONDS"
-      },
-      "end": {
-        "timeAmount": 4,
-        "timeUnit": "HOURS"
-      }
-    },
-    {
-      "type": "DaySynchronisedSlot",
-      "rate": 3,
-      "startDay": 1,
-      "endDay": 3
-    },
-    {
-      "type": "DaySynchronisedSlot",
-      "rate": 4,
-      "startDay": 3
-    }
-  ]
-}
-```
-
-The tariff includes both types of slots. Therefore, the type of calculation depends on the duration of the rental. Up to
-a rental period of four hours, the calculation is performed according to the RenalSynchronizedSlots. This happens
-identically as with the SlotBasedTariff. So there can be a maximum cost of 3 Euro. If the rental duration is greater
-than five hours, the price is calculated according to the RentalSynchronizedSlots. Which slot is used for the
-calculation depends on the number of days in use. A day is always from 0 to 24 o'clock. So a rental period from 12
-o'clock to 7 o'clock is considered as two days. With two days the second slot is taken for the calculation with the rate
-3 with a price per day of 8 euros. Thus, two days cost 16 euros. A rental period from Monday to Saturday will be
-calculated as six days. The appropriate slot is the last with the associated rate four and a cost of 7 euros per day.
-Thus, the cost is 42 euros.
 
 ### TimeBasedTariff
 
@@ -284,7 +190,7 @@ week and consist of a weekday and a time. The slots together must cover a whole 
 rate is also assigned to these slots. The calculation works similarly to a SlotBasedTariff, except that the slots
 matching the time of day are picked out.
 
-###### Example 4
+###### Example 3
 
 ```Json
 {
