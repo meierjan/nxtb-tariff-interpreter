@@ -15,20 +15,21 @@ sealed class Goodwill {
 }
 
 data class ChargedGoodwill(
-        val description: String,
-        val goodwillStart: Instant,
-        val goodwillEnd: Instant,
+    val description: String,
+    val goodwillStart: Instant,
+    val goodwillEnd: Instant,
 )
 
 // will be deducted from the end time of the rental
 @Serializable
 @SerialName("StaticGoodwill")
 data class StaticGoodwill(
-        val duration: Interval
+    val duration: Interval
 ) : Goodwill() {
     override val transparent = false
     override fun accept(visitor: IVisitor) {
         visitor.visitStaticGoodwill(this)
+        duration.accept(visitor)
     }
 }
 
@@ -36,11 +37,12 @@ data class StaticGoodwill(
 @Serializable
 @SerialName("FreeMinutes")
 data class FreeMinutes(
-        val duration: Interval
+    val duration: Interval
 ) : Goodwill() {
     override val transparent = true
     override fun accept(visitor: IVisitor) {
         visitor.visitFreeMinutes(this)
+        duration.accept(visitor)
     }
 }
 
@@ -48,7 +50,7 @@ data class FreeMinutes(
 @Serializable
 @SerialName("DynamicGoodwill")
 data class DynamicGoodwill(
-        val deductibleProportionInPercentage: Float
+    val deductibleProportionInPercentage: Float
 ) : Goodwill() {
     override val transparent = false
     override fun accept(visitor: IVisitor) {

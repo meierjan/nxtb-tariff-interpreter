@@ -28,6 +28,7 @@ interface IVisitor {
 
     fun visitInterval(interval: Interval)
     fun visitPrice(price: Price)
+    fun visitTime(time: TimeBasedTariff.TimeSlot.Time)
 
     fun visitRentalPeriod(rentalPeriod: RentalPeriod)
 

@@ -36,19 +36,19 @@ sealed class Tariff {
 @Serializable
 @SerialName("SlotBasedTariff")
 data class SlotBasedTariff(
-        override val id: TariffId,
-        override val rates: Set<Rate>,
-        override val billingInterval: Interval?,
-        @Serializable(with = CurrencySerializer::class)
-        override val currency: Currency,
-        override val goodwill: Goodwill? = null,
-        val slots: Set<Slot>
+    override val id: TariffId,
+    override val rates: Set<Rate>,
+    override val billingInterval: Interval?,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
+    override val goodwill: Goodwill? = null,
+    val slots: Set<Slot>
 ) : Tariff() {
     @Serializable
     data class Slot(
-            val start: Interval,
-            val end: Interval?,
-            val rate: RateId
+        val start: Interval,
+        val end: Interval?,
+        val rate: RateId
     ) {
         fun matches(start: Instant, end: Instant): Boolean {
             val duration = end.toEpochMilli() - start.toEpochMilli()
@@ -81,46 +81,52 @@ data class SlotBasedTariff(
 @Serializable
 @SerialName("TimeBasedTariff")
 data class TimeBasedTariff(
-        override val id: TariffId,
-        override val rates: Set<Rate>,
-        override val billingInterval: Interval?,
-        override val goodwill: Goodwill? = null,
-        @Serializable(with = CurrencySerializer::class)
-        override val currency: Currency,
-        @Serializable(with = TimeZoneSerializer::class)
-        val timeZone: TimeZone,
-        val timeSlots: List<TimeSlot>
+    override val id: TariffId,
+    override val rates: Set<Rate>,
+    override val billingInterval: Interval?,
+    override val goodwill: Goodwill? = null,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
+    @Serializable(with = TimeZoneSerializer::class)
+    val timeZone: TimeZone,
+    val timeSlots: List<TimeSlot>
 ) : Tariff() {
     @Serializable
     data class TimeSlot(
-            val from: Time,
-            val to: Time,
-            val rate: RateId
+        val from: Time,
+        val to: Time,
+        val rate: RateId
     ) {
         @Serializable
         data class Time(
-                val day: DayOfWeek,
-                val hour: Int,
-                val minutes: Int
+            val day: DayOfWeek,
+            val hour: Int,
+            val minutes: Int
         ) : Comparable<Time> {
             override fun compareTo(other: Time): Int =
-                    if (day == other.day) {
-                        if (hour == other.hour) {
-                            if (minutes == other.minutes) {
-                                0
-                            } else {
-                                minutes.compareTo(other.minutes)
-                            }
+                if (day == other.day) {
+                    if (hour == other.hour) {
+                        if (minutes == other.minutes) {
+                            0
                         } else {
-                            hour.compareTo(other.hour)
+                            minutes.compareTo(other.minutes)
                         }
                     } else {
-                        day.compareTo(other.day)
+                        hour.compareTo(other.hour)
                     }
+                } else {
+                    day.compareTo(other.day)
+                }
+
+            fun accept(visitor: IVisitor) {
+                visitor.visitTime(this)
+            }
         }
 
         fun accept(visitor: IVisitor) {
             visitor.visitTimeSlot(this)
+            from.accept(visitor)
+            to.accept(visitor)
         }
 
     }
