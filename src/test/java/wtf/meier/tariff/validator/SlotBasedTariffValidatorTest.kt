@@ -82,7 +82,7 @@ internal class SlotBasedTariffValidatorTest {
     }
 
     @Test
-    fun `last slot has null value for end`() {
+    fun `SlotBasedTariff - last slot has null value for end`() {
         val invalidTariff = slotBasedTariff.copy(
             slots = setOf(
                 SlotBasedTariff.Slot(

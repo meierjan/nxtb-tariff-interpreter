@@ -15,7 +15,9 @@ import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
+import wtf.meier.tariff.validator.exception.InvalidRentalPeriodException
 import wtf.meier.tariff.validator.exception.tariff.*
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 
 object Validator : IVisitor {
@@ -139,6 +141,8 @@ object Validator : IVisitor {
     }
 
     override fun visitRentalPeriod(rentalPeriod: RentalPeriod) {
+        if(rentalPeriod.rentalStart >= rentalPeriod.rentalEnd) throw InvalidRentalPeriodException("rentalEnd is before rentalStart")
+        if(rentalPeriod.rentalEnd > Instant.now()) throw InvalidRentalPeriodException("rental end is in future")
     }
 
 }

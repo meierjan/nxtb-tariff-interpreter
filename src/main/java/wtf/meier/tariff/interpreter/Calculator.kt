@@ -6,6 +6,7 @@ import wtf.meier.tariff.interpreter.model.goodwill.GoodwillCalculator
 import wtf.meier.tariff.interpreter.model.goodwill.IGoodwillCalculator
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffCalculator
+import wtf.meier.tariff.validator.Validator
 
 
 class Calculator(
@@ -15,6 +16,7 @@ class Calculator(
 
 
     override fun calculate(tariff: Tariff, rentalPeriod: RentalPeriod): Receipt {
+        rentalPeriod.accept(Validator)
         return calculator.calculate(tariff, goodwillCalculator.calculateGoodwill(tariff, rentalPeriod))
     }
 }
