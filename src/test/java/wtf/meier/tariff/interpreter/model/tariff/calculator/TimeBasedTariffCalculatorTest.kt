@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
@@ -42,47 +43,47 @@ class TimeBasedTariffCalculatorTest {
     price = Price(50)
   )
 
-  /**
-   * tariff:
-   *  every day
-   *  08:00 AM -> 10:00 PM -> 1 Euro
-   *  10:00 PM -> 08:00 AM -> 0.5 Euro
-   */
-  private val tariff1 = TimeBasedTariff(
-    id = TariffId(1),
-    freeSeconds = 0,
-    billingInterval = null,
-    rates = setOf(
-      rate1,
-      rate2
-    ),
-    timeSlots = listOf(
-      TimeBasedTariff.TimeSlot(
-        from = TimeBasedTariff.TimeSlot.Time(
-          DayOfWeek.MONDAY,
-          hour = 8,
-          minutes = 0
+    /**
+     * tariff:
+     *  every day
+     *  08:00 AM -> 10:00 PM -> 1 Euro
+     *  10:00 PM -> 08:00 AM -> 0.5 Euro
+     */
+    private val tariff1 = TimeBasedTariff(
+        id = TariffId(1),
+        billingInterval = null,
+        currency = Currency.getInstance("EUR"),
+        rates = setOf(
+            rate1,
+            rate2
         ),
-        to = TimeBasedTariff.TimeSlot.Time(
-          DayOfWeek.MONDAY,
-          hour = 22,
-          minutes = 0
-        ),
-        rate = rate1.id
-      ),
-      TimeBasedTariff.TimeSlot(
-        from = TimeBasedTariff.TimeSlot.Time(
-          DayOfWeek.MONDAY,
-          hour = 22,
-          minutes = 0
-        ),
-        to = TimeBasedTariff.TimeSlot.Time(
-          DayOfWeek.TUESDAY,
-          hour = 8,
-          minutes = 0
-        ),
-        rate = rate2.id
-      ),
+        timeSlots = listOf(
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                rate = rate1.id
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 22,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 8,
+                    minutes = 0
+                ),
+                rate = rate2.id
+            ),
 
       TimeBasedTariff.TimeSlot(
         from = TimeBasedTariff.TimeSlot.Time(
@@ -253,25 +254,61 @@ class TimeBasedTariffCalculatorTest {
   @Test
   fun `test Monday 4 PM to Tuesday 9PM`() {
 
-    val start = ZonedDateTime.of(2021, 4, 19, 16, 0, 0, 0, timezone.toZoneId()).toInstant()
-    val end = ZonedDateTime.of(2021, 4, 20, 21, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val start = ZonedDateTime.of(2021, 4, 19, 16, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val end = ZonedDateTime.of(2021, 4, 20, 21, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val rentalPeriod = RentalPeriod(start, end)
 
-
-    val receipt = calculator.calculate(tariff1, start, end)
+        val receipt = calculator.calculate(tariff1, rentalPeriod)
 
 
     assertThat(receipt.price, equalTo(250))
-
   }
 
+    @Test
+    fun `test Tuesday 7AM to Tuesday 8AM`() {
 
-  @Test
-  fun `test intersecting slot correct`() {
-    val start = ZonedDateTime.of(2021, 4, 19, 16, 0, 0, 0, timezone.toZoneId())
+        val start = ZonedDateTime.of(2021, 4, 20, 7, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val end = ZonedDateTime.of(2021, 4, 20, 8, 0, 0, 0, timezone.toZoneId()).toInstant()
+        val rentalPeriod = RentalPeriod(start, end)
+
+        val receipt = calculator.calculate(tariff1, rentalPeriod)
+
+        // One second into 8AM slot, so additional 100 apply
+        assertThat(receipt.price, equalTo(150))
+
+    }
+
+
+    @Test
+    fun `test intersecting slot correct if later slot that day`() {
+        // Monday
+        val start = ZonedDateTime.of(2021, 4, 19, 16, 0, 0, 0, timezone.toZoneId())
 
     val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
 
-    assertThat(slot, equalTo(tariff1.timeSlots.first()))
+        assertThat(slot, equalTo(tariff1.timeSlots.first())) // Monday 8am
+
+    }
+
+    @Test
+    fun `test intersecting slot correct for same start`() {
+        // Sunday
+        val start = ZonedDateTime.of(2021, 4, 25, 22, 0, 0, 0, timezone.toZoneId())
+
+        val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
+
+        assertThat(slot, equalTo(tariff1.timeSlots.last())) // Sunday 22pm
+
+    }
+
+    @Test
+    fun `test intersecting slot correct if slot started day before`() {
+        // Wednesday
+        val start = ZonedDateTime.of(2021, 4, 21, 6, 12, 0, 0, timezone.toZoneId())
+
+        val slot = calculator.firstIntersectingSlot(tariff1.timeSlots, start)
+
+        assertThat(slot, equalTo(tariff1.timeSlots[3])) // TUESDAY 22pm
 
   }
 

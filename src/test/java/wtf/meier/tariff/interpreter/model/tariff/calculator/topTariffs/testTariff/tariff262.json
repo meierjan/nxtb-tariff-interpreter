@@ -1,0 +1,84 @@
+{
+  "type": "SlotBasedTariff",
+  "id": 1,
+  "currency": "PLN",
+  "goodwill": {
+    "type": "FreeMinutes",
+    "duration": {
+      "timeAmount": 20,
+      "timeUnit": "MINUTES"
+    }
+  },
+  "rates": [
+    {
+      "type": "FixedRate",
+      "id": 1,
+      "currency": "PLN",
+      "price": {
+        "credit": 200
+      }
+    },
+    {
+      "type": "TimeBasedRate",
+      "id": 2,
+      "currency": "PLN",
+      "interval": {
+        "timeAmount": 1,
+        "timeUnit": "HOURS"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 400
+      },
+      "maxPrice": {
+        "credit": 2147483647
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    },
+    {
+      "type": "FixedRate",
+      "id": 3,
+      "currency": "PLN",
+      "price": {
+        "credit": 30000
+      }
+    }
+  ],
+  "billingInterval": null,
+  "slots": [
+    {
+      "start": {
+        "timeAmount": 0,
+        "timeUnit": "MINUTES"
+      },
+      "end": {
+        "timeAmount": 1,
+        "timeUnit": "HOURS"
+      },
+      "rate": 1
+    },
+    {
+      "start": {
+        "timeAmount": 1,
+        "timeUnit": "HOURS"
+      },
+      "end": {
+        "timeAmount": 24,
+        "timeUnit": "HOURS"
+      },
+      "rate": 2
+    },
+    {
+      "start": {
+        "timeAmount": 1,
+        "timeUnit": "DAYS"
+      },
+      "end": null,
+      "rate": 3
+    }
+  ]
+}

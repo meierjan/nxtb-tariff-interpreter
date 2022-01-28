@@ -9,3 +9,9 @@ fun min(d1: Instant, d2: Instant) =
 
 operator fun Instant.plus(interval: Interval): Instant =
     this.plusMillis(interval.durationMillis())
+
+operator fun Instant.minus(interval: Interval): Instant =
+    this.minusMillis(interval.durationMillis())
+
+operator fun Instant.minus(instant: Instant): Instant =
+    Instant.ofEpochMilli(this.toEpochMilli() - instant.toEpochMilli())

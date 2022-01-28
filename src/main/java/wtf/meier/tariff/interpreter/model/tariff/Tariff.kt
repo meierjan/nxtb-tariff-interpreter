@@ -1,35 +1,48 @@
 package wtf.meier.tariff.interpreter.model.tariff
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import wtf.meier.tariff.interpreter.extension.durationMillis
+import wtf.meier.tariff.interpreter.extension.minus
 import wtf.meier.tariff.interpreter.model.Interval
+import wtf.meier.tariff.interpreter.model.goodwill.Goodwill
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
+import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
+import wtf.meier.tariff.interpreter.serializer.TimeZoneSerializer
 import java.time.DayOfWeek
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class TariffId(val id: Long)
+@JvmInline
+@Serializable
+value class TariffId(val id: Long)
 
 class InvalidTariffFormatException(message: String) : RuntimeException(message)
 
+@Serializable
 sealed class Tariff {
     abstract val id: TariffId
-    abstract val freeSeconds: Int
     abstract val rates: Set<Rate>
     abstract val billingInterval: Interval?
+    abstract val goodwill: Goodwill?
+    abstract val currency: Currency
 
 }
 
+@Serializable
+@SerialName("SlotBasedTariff")
 data class SlotBasedTariff(
     override val id: TariffId,
-    override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
+    override val goodwill: Goodwill? = null,
     val slots: Set<Slot>
 ) : Tariff() {
+    @Serializable
     data class Slot(
         val start: Interval,
         val end: Interval?,
@@ -44,24 +57,33 @@ data class SlotBasedTariff(
 
             return t1 <= duration
         }
+
+        val duration: Interval
+            get() = end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
     }
+
 }
 
-
+@Serializable
+@SerialName("TimeBasedTariff")
 data class TimeBasedTariff(
     override val id: TariffId,
-    override val freeSeconds: Int,
     override val rates: Set<Rate>,
     override val billingInterval: Interval?,
+    override val goodwill: Goodwill? = null,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
+    @Serializable(with = TimeZoneSerializer::class)
     val timeZone: TimeZone,
     val timeSlots: List<TimeSlot>
 ) : Tariff() {
-
+    @Serializable
     data class TimeSlot(
         val from: Time,
         val to: Time,
         val rate: RateId
     ) {
+        @Serializable
         data class Time(
             val day: DayOfWeek,
             val hour: Int,
@@ -69,27 +91,18 @@ data class TimeBasedTariff(
         ) : Comparable<Time> {
             override fun compareTo(other: Time): Int =
                 if (day == other.day) {
-                    if(hour == other.hour) {
-                        if(minutes == other.minutes) {
+                    if (hour == other.hour) {
+                        if (minutes == other.minutes) {
                             0
                         } else {
                             minutes.compareTo(other.minutes)
                         }
-                    }  else {
+                    } else {
                         hour.compareTo(other.hour)
                     }
                 } else {
                     day.compareTo(other.day)
                 }
-            }
+        }
     }
-
 }
-
-data class DayBasedTariff(
-    override val id: TariffId,
-    override val freeSeconds: Int,
-    override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
-    val timeZone: TimeZone
-) : Tariff()

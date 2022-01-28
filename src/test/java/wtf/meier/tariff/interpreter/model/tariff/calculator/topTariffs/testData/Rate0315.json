@@ -1,0 +1,86 @@
+{
+    "rate_meta": {
+        "id": 315,
+        "currency": "PLN",
+        "included_free_minutes": 25
+    },
+    "chart_meta": {
+        "limit": null,
+        "max_duration_seconds": 259290,
+        "assume_full_minute_tariff": true,
+        "fictive_lending_start_time": null,
+        "time": 203
+    },
+    "chart": [
+        {
+            "start": 1,
+            "end": 1499,
+            "price": 0
+        },
+        {
+            "start": 1500,
+            "end": 3599,
+            "price": 100
+        },
+        {
+            "start": 3600,
+            "end": 7199,
+            "price": 400
+        },
+        {
+            "start": 7200,
+            "end": 10799,
+            "price": 900
+        },
+        {
+            "start": 10800,
+            "end": 14399,
+            "price": 1400
+        },
+        {
+            "start": 14400,
+            "end": 17999,
+            "price": 1900
+        },
+        {
+            "start": 18000,
+            "end": 21599,
+            "price": 2400
+        },
+        {
+            "start": 21600,
+            "end": 25199,
+            "price": 2900
+        },
+        {
+            "start": 25200,
+            "end": 28799,
+            "price": 3400
+        },
+        {
+            "start": 28800,
+            "end": 32399,
+            "price": 3900
+        },
+        {
+            "start": 32400,
+            "end": 35999,
+            "price": 4400
+        },
+        {
+            "start": 36000,
+            "end": 39599,
+            "price": 4900
+        },
+        {
+            "start": 39600,
+            "end": 43199,
+            "price": 5400
+        },
+        {
+            "start": 43200,
+            "end": null,
+            "price": 35400
+        }
+    ]
+}

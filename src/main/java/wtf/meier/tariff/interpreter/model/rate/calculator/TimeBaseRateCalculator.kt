@@ -21,10 +21,20 @@ class TimeBaseRateCalculator {
 
         val price = min(rate.maxPrice, max(rate.minPrice, timePrice))
 
+        val description = if (price == rate.maxPrice){
+            "MaxPrice in interval"
+        } else if(price == rate.minPrice){
+            "MinPrice in interval"
+        }else {
+            "${rate.pricePerInterval.credit / 100}${rate.currency}  *  $intervals + ${rate.basePrice.credit / 100}${rate.currency}"
+        }
+
         return RateCalculator.CalculatedPrice(
             price = price,
             currency = rate.currency,
-            description = "Day Price"
+            description = description,
+            calculationStart = rentalStart,
+            calculationEnd = rentalEnd
         )
     }
 }
