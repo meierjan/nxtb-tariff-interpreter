@@ -6,8 +6,8 @@ import wtf.meier.tariff.interpreter.model.tariff.calculator.SlotBasedTariffCalcu
 import wtf.meier.tariff.interpreter.model.tariff.calculator.TimeBasedTariffCalculator
 
 class TariffCalculator(
-        private val slotBasedTariffCalculator: SlotBasedTariffCalculator = SlotBasedTariffCalculator(),
-        private val timeBasedTariffCalculator: TimeBasedTariffCalculator = TimeBasedTariffCalculator(),
+    private val slotBasedTariffCalculator: SlotBasedTariffCalculator = SlotBasedTariffCalculator(),
+    private val timeBasedTariffCalculator: TimeBasedTariffCalculator = TimeBasedTariffCalculator(),
 ) {
 
     fun calculate(tariff: Tariff, rentalPeriod: RentalPeriod): Receipt =

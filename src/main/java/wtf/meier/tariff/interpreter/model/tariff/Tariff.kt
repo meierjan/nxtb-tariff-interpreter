@@ -128,7 +128,6 @@ data class TimeBasedTariff(
             from.accept(visitor)
             to.accept(visitor)
         }
-
     }
 
     override fun accept(visitor: IVisitor) {
