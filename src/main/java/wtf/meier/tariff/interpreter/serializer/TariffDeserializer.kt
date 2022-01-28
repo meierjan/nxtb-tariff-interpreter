@@ -12,7 +12,6 @@ import wtf.meier.tariff.interpreter.model.goodwill.StaticGoodwill
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
-import wtf.meier.tariff.interpreter.model.tariff.DayBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
@@ -26,7 +25,6 @@ object TariffDeserializer {
         }
         polymorphic(Tariff::class) {
             subclass(SlotBasedTariff::class)
-            subclass(DayBasedTariff::class)
             subclass(TimeBasedTariff::class)
         }
         polymorphic(Goodwill::class) {

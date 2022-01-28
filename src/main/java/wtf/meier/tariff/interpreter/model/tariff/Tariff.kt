@@ -105,18 +105,4 @@ data class TimeBasedTariff(
                 }
         }
     }
-
 }
-
-@Serializable
-@SerialName("DayBasedTariff")
-data class DayBasedTariff(
-    override val id: TariffId,
-    override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
-    override val goodwill: Goodwill? = null,
-    @Serializable(with = CurrencySerializer::class)
-    override val currency: Currency,
-    @Serializable(with = TimeZoneSerializer::class)
-    val timeZone: TimeZone
-) : Tariff()
