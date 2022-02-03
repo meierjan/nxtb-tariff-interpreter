@@ -2,6 +2,7 @@ package wtf.meier.tariff.interpreter.model.tariff
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import wtf.meier.tariff.interpreter.IVisitable
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.minus
 import wtf.meier.tariff.interpreter.model.Interval
@@ -23,14 +24,14 @@ value class TariffId(val id: Long)
 class InvalidTariffFormatException(message: String) : RuntimeException(message)
 
 @Serializable
-sealed class Tariff {
+sealed class Tariff : IVisitable {
     abstract val id: TariffId
     abstract val rates: Set<Rate>
     abstract val billingInterval: Interval?
     abstract val goodwill: Goodwill?
     abstract val currency: Currency
 
-    abstract fun accept(visitor: IVisitor)
+    abstract override fun accept(visitor: IVisitor)
 }
 
 @Serializable
@@ -49,7 +50,7 @@ data class SlotBasedTariff(
         val start: Interval,
         val end: Interval?,
         val rate: RateId
-    ) {
+    ) : IVisitable {
         fun matches(start: Instant, end: Instant): Boolean {
             val duration = end.toEpochMilli() - start.toEpochMilli()
 
@@ -60,7 +61,7 @@ data class SlotBasedTariff(
             return t1 <= duration
         }
 
-        fun accept(visitor: IVisitor) {
+        override fun accept(visitor: IVisitor) {
             visitor.visitSlot(this)
         }
 
@@ -92,13 +93,13 @@ data class TimeBasedTariff(
         val from: Time,
         val to: Time,
         val rate: RateId
-    ) {
+    ) : IVisitable {
         @Serializable
         data class Time(
             val day: DayOfWeek,
             val hour: Int,
             val minutes: Int
-        ) : Comparable<Time> {
+        ) : IVisitable, Comparable<Time> {
             override fun compareTo(other: Time): Int =
                 if (day == other.day) {
                     if (hour == other.hour) {
@@ -114,12 +115,12 @@ data class TimeBasedTariff(
                     day.compareTo(other.day)
                 }
 
-            fun accept(visitor: IVisitor) {
+            override fun accept(visitor: IVisitor) {
                 visitor.visitTime(this)
             }
         }
 
-        fun accept(visitor: IVisitor) {
+        override fun accept(visitor: IVisitor) {
             visitor.visitTimeSlot(this)
         }
     }

@@ -2,6 +2,7 @@ package wtf.meier.tariff.interpreter.model.rate
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import wtf.meier.tariff.interpreter.IVisitable
 import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
@@ -14,24 +15,24 @@ import java.util.*
 value class RateId(val id: Long)
 
 @Serializable
-sealed class Rate {
+sealed class Rate : IVisitable {
     abstract val id: RateId
     abstract val currency: Currency
 
-    abstract fun accept(visitor: IVisitor)
+    abstract override fun accept(visitor: IVisitor)
 }
 
 @Serializable
 @SerialName("TimeBasedRate")
 data class TimeBasedRate(
-        override val id: RateId,
-        @Serializable(with = CurrencySerializer::class)
-        override val currency: Currency,
-        val interval: Interval,
-        val basePrice: Price,
-        val pricePerInterval: Price,
-        val maxPrice: Price,
-        val minPrice: Price
+    override val id: RateId,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
+    val interval: Interval,
+    val basePrice: Price,
+    val pricePerInterval: Price,
+    val maxPrice: Price,
+    val minPrice: Price
 ) : Rate() {
     override fun accept(visitor: IVisitor) {
         visitor.visitTimeBasedRate(this)
@@ -41,10 +42,10 @@ data class TimeBasedRate(
 @Serializable
 @SerialName("FixedRate")
 data class FixedRate(
-        override val id: RateId,
-        @Serializable(with = CurrencySerializer::class)
-        override val currency: Currency,
-        val price: Price
+    override val id: RateId,
+    @Serializable(with = CurrencySerializer::class)
+    override val currency: Currency,
+    val price: Price
 ) : Rate() {
     override fun accept(visitor: IVisitor) {
         visitor.visitFixedRate(this)

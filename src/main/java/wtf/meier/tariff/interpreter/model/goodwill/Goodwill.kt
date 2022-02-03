@@ -2,16 +2,17 @@ package wtf.meier.tariff.interpreter.model.goodwill
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import wtf.meier.tariff.interpreter.IVisitable
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.IVisitor
 import java.time.Instant
 
 @Serializable
-sealed class Goodwill {
+sealed class Goodwill:IVisitable {
     // todo do we need this?
     abstract val transparent: Boolean
 
-    abstract fun accept(visitor: IVisitor)
+    abstract override fun accept(visitor: IVisitor)
 }
 
 data class ChargedGoodwill(
