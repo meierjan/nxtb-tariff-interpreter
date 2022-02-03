@@ -29,7 +29,6 @@ data class StaticGoodwill(
     override val transparent = false
     override fun accept(visitor: IVisitor) {
         visitor.visitStaticGoodwill(this)
-        duration.accept(visitor)
     }
 }
 
@@ -42,7 +41,6 @@ data class FreeMinutes(
     override val transparent = true
     override fun accept(visitor: IVisitor) {
         visitor.visitFreeMinutes(this)
-        duration.accept(visitor)
     }
 }
 

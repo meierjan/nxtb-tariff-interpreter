@@ -70,10 +70,6 @@ data class SlotBasedTariff(
 
     override fun accept(visitor: IVisitor) {
         visitor.visitSlotBasedTariff(this)
-        rates.forEach { it.accept(visitor) }
-        slots.forEach { it.accept(visitor) }
-        billingInterval?.accept(visitor)
-        goodwill?.accept(visitor)
     }
 
 }
@@ -125,17 +121,11 @@ data class TimeBasedTariff(
 
         fun accept(visitor: IVisitor) {
             visitor.visitTimeSlot(this)
-            from.accept(visitor)
-            to.accept(visitor)
         }
     }
 
     override fun accept(visitor: IVisitor) {
         visitor.visitTimeBasedTariff(this)
-        timeSlots.forEach { it.accept(visitor) }
-        rates.forEach { it.accept(visitor) }
-        goodwill?.accept(visitor)
-        billingInterval?.accept(visitor)
     }
 
 }

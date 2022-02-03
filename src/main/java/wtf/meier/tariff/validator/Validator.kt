@@ -23,6 +23,11 @@ import java.util.concurrent.TimeUnit
 object Validator : IVisitor {
 
     override fun visitSlotBasedTariff(slotBasedTariff: SlotBasedTariff) {
+        slotBasedTariff.rates.forEach { it.accept(this) }
+        slotBasedTariff.slots.forEach { it.accept(this) }
+        slotBasedTariff.billingInterval?.accept(this)
+        slotBasedTariff.goodwill?.accept(this)
+
         val rateMap = slotBasedTariff.rates.associateBy { it.id }
 
         // CHECK: slots is not empty
@@ -49,11 +54,14 @@ object Validator : IVisitor {
 
         // CHECK: the last slot has null as end value
         if (actualInterval != null) throw InvalidSlotException("the end value of the last slot is not null")
-
-
     }
 
     override fun visitTimeBasedTariff(timeBasedTariff: TimeBasedTariff) {
+        timeBasedTariff.timeSlots.forEach { it.accept(this) }
+        timeBasedTariff.rates.forEach { it.accept(this) }
+        timeBasedTariff.goodwill?.accept(this)
+        timeBasedTariff.billingInterval?.accept(this)
+
         // CHECK: timeSlots is not empty
         if (timeBasedTariff.timeSlots.isEmpty()) throw InvalidTimeBasedTariffException("timeSlots is empty")
 
@@ -99,24 +107,30 @@ object Validator : IVisitor {
 
     override fun visitSlot(slot: SlotBasedTariff.Slot) {
         if ((slot.end != null) && (slot.start >= slot.end)) throw InvalidSlotException("slot end is before")
-        // visitor goes to start and end interval and checks them automatically
 
+        slot.start.accept(this)
+        slot.end?.accept(this)
     }
 
     override fun visitTimeSlot(timeSlot: TimeBasedTariff.TimeSlot) {
-        //visitor goes to from and to time automatically
+        timeSlot.from.accept(this)
+        timeSlot.to.accept(this)
     }
 
     override fun visitFixedRate(fixedRate: FixedRate) {
-        // visitor goes to price and checks it automatically
+        fixedRate.price.accept(this)
     }
 
     override fun visitTimeBasedRate(timeBasedRate: TimeBasedRate) {
-        // visitor goes to all prices and checks it automatically
+        timeBasedRate.interval.accept(this)
+        timeBasedRate.basePrice.accept(this)
+        timeBasedRate.pricePerInterval.accept(this)
+        timeBasedRate.maxPrice.accept(this)
+        timeBasedRate.minPrice.accept(this)
     }
 
     override fun visitStaticGoodwill(staticGoodwill: StaticGoodwill) {
-        // visitor goes to interval and checks it automatically
+        staticGoodwill.duration.accept(Validator)
     }
 
     override fun visitDynamicGoodwill(dynamicGoodwill: DynamicGoodwill) {
@@ -124,11 +138,11 @@ object Validator : IVisitor {
     }
 
     override fun visitFreeMinutes(freeMinutes: FreeMinutes) {
-        // visitor goes to interval and checks it automatically
+        freeMinutes.duration.accept(this)
     }
 
     override fun visitInterval(interval: Interval) {
-        if (interval.timeAmount <= 0) throw InvalidIntervalException("The interval is negative: ${interval.timeAmount}")
+        if (interval.timeAmount < 0) throw InvalidIntervalException("The interval is negative: ${interval.timeAmount}")
     }
 
     override fun visitPrice(price: Price) {
@@ -141,8 +155,8 @@ object Validator : IVisitor {
     }
 
     override fun visitRentalPeriod(rentalPeriod: RentalPeriod) {
-        if(rentalPeriod.rentalStart >= rentalPeriod.rentalEnd) throw InvalidRentalPeriodException("rentalEnd is before rentalStart")
-        if(rentalPeriod.rentalEnd > Instant.now()) throw InvalidRentalPeriodException("rental end is in future")
+        if (rentalPeriod.rentalStart >= rentalPeriod.rentalEnd) throw InvalidRentalPeriodException("rentalEnd is before rentalStart")
+        if (rentalPeriod.rentalEnd > Instant.now()) throw InvalidRentalPeriodException("rental end is in future")
     }
 
 }

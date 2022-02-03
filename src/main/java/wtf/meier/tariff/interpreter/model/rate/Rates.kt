@@ -35,11 +35,6 @@ data class TimeBasedRate(
 ) : Rate() {
     override fun accept(visitor: IVisitor) {
         visitor.visitTimeBasedRate(this)
-        interval.accept(visitor)
-        basePrice.accept(visitor)
-        pricePerInterval.accept(visitor)
-        maxPrice.accept(visitor)
-        minPrice.accept(visitor)
     }
 }
 
@@ -53,6 +48,5 @@ data class FixedRate(
 ) : Rate() {
     override fun accept(visitor: IVisitor) {
         visitor.visitFixedRate(this)
-        price.accept(visitor)
     }
 }
