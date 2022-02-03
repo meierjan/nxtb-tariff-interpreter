@@ -317,7 +317,7 @@ class TimeBasedTariffCalculatorTest {
     val start = Instant.ofEpochSecond(0)
     val end = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, timezone.toZoneId()).toInstant()
 
-    val receipt = calculator.calculate(tariff1, start, end)
+    val receipt = calculator.calculate(tariff1, RentalPeriod(start, end))
 
     // I never actually calculated this - this is just a result that I am freezing so
     // we see if something changes

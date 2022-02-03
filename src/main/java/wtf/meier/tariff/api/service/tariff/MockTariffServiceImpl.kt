@@ -48,7 +48,6 @@ class MockTariffServiceImpl : TariffService {
    */
   private val tariff1 = TimeBasedTariff(
     id = TariffId(1),
-    freeSeconds = 0,
     billingInterval = null,
     rates = setOf(
       rate1,
@@ -245,7 +244,8 @@ class MockTariffServiceImpl : TariffService {
         rate = rate2.id
       ),
     ),
-    timeZone = timezone
+    timeZone = timezone,
+    currency = Currency.getInstance("EUR")
   )
 
   private val tariffMap: MutableMap<TariffId, Tariff> = mutableMapOf()
