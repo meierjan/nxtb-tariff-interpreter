@@ -25,7 +25,7 @@ class InvalidTariffFormatException(message: String) : RuntimeException(message)
 sealed class Tariff {
     abstract val id: TariffId
     abstract val rates: Set<Rate>
-    abstract val billingInterval: Interval?
+    abstract val billingInterval: BillingInterval?
     abstract val goodwill: Goodwill?
     abstract val currency: Currency
 
@@ -36,7 +36,7 @@ sealed class Tariff {
 data class SlotBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
+    override val billingInterval: BillingInterval? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     override val goodwill: Goodwill? = null,
@@ -69,7 +69,7 @@ data class SlotBasedTariff(
 data class TimeBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: Interval?,
+    override val billingInterval: BillingInterval? = null,
     override val goodwill: Goodwill? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,

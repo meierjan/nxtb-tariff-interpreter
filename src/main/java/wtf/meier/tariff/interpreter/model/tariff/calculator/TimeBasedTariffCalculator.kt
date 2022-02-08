@@ -1,21 +1,30 @@
 package wtf.meier.tariff.interpreter.model.tariff.calculator
 
+import wtf.meier.tariff.interpreter.extension.compareTo
 import wtf.meier.tariff.interpreter.extension.forwardBefore
+import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
-import wtf.meier.tariff.interpreter.util.CyclicList
+import wtf.meier.tariff.interpreter.util.CyclicListIterator
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.temporal.TemporalAdjusters
+import java.util.concurrent.TimeUnit
 
 class TimeBasedTariffCalculator(
     private val rateCalculator: RateCalculator = RateCalculator()
 ) {
     fun calculate(tariff: TimeBasedTariff, rentalPeriod: RentalPeriod): Receipt {
+        val bill = mutableListOf<RateCalculator.CalculatedPrice>()
 
+        if (rentalPeriod.duration <= Interval(0, TimeUnit.MINUTES))
+            return bill.toReceipt(
+                chargedGoodwill = rentalPeriod.chargedGoodwill,
+                currency = tariff.currency
+            )
 
         val ratesById = tariff.rates.associateBy { it.id }
         val zonedRentalStart = rentalPeriod.invoicedStart.atZone(tariff.timeZone.toZoneId())
@@ -28,11 +37,9 @@ class TimeBasedTariffCalculator(
             ?: throw RuntimeException("not slot found -> slots need to be exhaustive")
 
 
-        val slotIterator = CyclicList(sortedSlots).listIterator()
+        val slotIterator = CyclicListIterator(sortedSlots)
             .forwardBefore(firstIntersectingSlot)
 
-
-        val bill = mutableListOf<RateCalculator.CalculatedPrice>()
 
         // First interval: start, otherwise slot end from before
         var lastSlotEnd = zonedRentalStart
@@ -53,7 +60,7 @@ class TimeBasedTariffCalculator(
 
             // calculate price
             val intersectionStart = lastSlotEnd.toInstant()
-            val intersectionEnd = slotEnd.toInstant()
+            val intersectionEnd = minOf(slotEnd.toInstant(), rentalPeriod.invoicedEnd)
 
             val receipt = rateCalculator.calculate(currentRate, intersectionStart, intersectionEnd)
             bill.add(receipt)
@@ -72,7 +79,6 @@ class TimeBasedTariffCalculator(
             chargedGoodwill = rentalPeriod.chargedGoodwill
         )
     }
-
 
     fun firstIntersectingSlot(list: List<TimeBasedTariff.TimeSlot>, at: ZonedDateTime): TimeBasedTariff.TimeSlot? {
         // Check all slots and choose the one with the closest starting date
@@ -96,6 +102,4 @@ class TimeBasedTariffCalculator(
             Duration.between(slotStart, at)
         }
     }
-
-
 }

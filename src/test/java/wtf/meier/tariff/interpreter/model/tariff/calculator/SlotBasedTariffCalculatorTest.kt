@@ -11,6 +11,7 @@ import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
+import wtf.meier.tariff.interpreter.model.tariff.BillingInterval
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
 import java.time.Instant
@@ -57,7 +58,7 @@ class SlotBasedTariffCalculatorTest {
                 RateId(1)
             )
         ),
-        billingInterval = Interval(1, TimeUnit.DAYS)
+        billingInterval = BillingInterval(duration = Interval(1, TimeUnit.DAYS))
     )
 
     @Test
@@ -132,7 +133,7 @@ class SlotBasedTariffCalculatorTest {
                 RateId(1)
             )
         ),
-        billingInterval = Interval(1, TimeUnit.DAYS)
+        billingInterval = BillingInterval(Interval(1, TimeUnit.DAYS))
     )
 
     @Test
@@ -204,7 +205,7 @@ class SlotBasedTariffCalculatorTest {
                 RateId(1)
             )
         ),
-        billingInterval = Interval(20, MINUTES)
+        billingInterval = BillingInterval(Interval(20, MINUTES))
     )
 
     @Test
