@@ -11,7 +11,7 @@ import java.io.FileReader
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-class topTariffsTest {
+class TopTariffsTest {
 
     @Test
     fun `test tariff 10 `() {
