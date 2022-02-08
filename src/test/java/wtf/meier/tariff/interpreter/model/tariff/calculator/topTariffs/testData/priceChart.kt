@@ -17,7 +17,10 @@ import java.util.concurrent.TimeUnit
 data class DataPoint(val start: Long, val end: Long?, val price: Int)
 
 @Serializable
-data class PriceChart(val chart: Array<DataPoint>)
+data class ChartMeta(val fictive_lending_start_time: Long?)
+
+@Serializable
+data class PriceChart(val chart: Array<DataPoint>, val chart_meta: ChartMeta)
 
 
 object PriceChartTester {
@@ -35,7 +38,16 @@ object PriceChartTester {
             val receipt = calculator.calculate(
                 tariff = tariff,
                 rentalPeriod = RentalPeriod(
-                    rentalEnd = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(dataPoint.end))
+                    rentalStart = Instant.ofEpochMilli(
+                        TimeUnit.SECONDS.toMillis(
+                            priceChart.chart_meta?.fictive_lending_start_time ?: 0L + 7200
+                        )
+                    ),
+                    rentalEnd = Instant.ofEpochMilli(
+                        TimeUnit.SECONDS.toMillis(
+                            (priceChart.chart_meta?.fictive_lending_start_time ?: 0) + 86399 + 7200
+                        )
+                    )
                 )
             )
 
