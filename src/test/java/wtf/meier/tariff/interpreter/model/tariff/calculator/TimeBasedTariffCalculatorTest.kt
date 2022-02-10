@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.model.goodwill.FreeMinutes
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
-import wtf.meier.tariff.interpreter.model.tariff.BillingInterval
+import wtf.meier.tariff.interpreter.model.billingInterval.BillingInterval
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
 import java.time.DayOfWeek
@@ -26,6 +27,7 @@ class TimeBasedTariffCalculatorTest {
     private lateinit var calculator: TimeBasedTariffCalculator
 
     private val timeZone = TimeZone.getTimeZone(ZoneId.of("GMT"))
+    private val currency = Currency.getInstance("EUR")
 
     @BeforeEach
     fun setup() {
@@ -35,13 +37,13 @@ class TimeBasedTariffCalculatorTest {
 
     private val rate1 = FixedRate(
         id = RateId(1),
-        currency = Currency.getInstance("EUR"),
+        currency = currency,
         price = Price(100)
     )
 
     private val rate2 = FixedRate(
         id = RateId(2),
-        currency = Currency.getInstance("EUR"),
+        currency = currency,
         price = Price(50)
     )
 
@@ -54,7 +56,7 @@ class TimeBasedTariffCalculatorTest {
     private val tariff1 = TimeBasedTariff(
         id = TariffId(1),
         billingInterval = null,
-        currency = Currency.getInstance("EUR"),
+        currency = currency,
         rates = setOf(
             rate1,
             rate2
@@ -317,7 +319,7 @@ class TimeBasedTariffCalculatorTest {
 
     private var tariff2 = TimeBasedTariff(
         id = TariffId(2),
-        currency = Currency.getInstance("EUR"),
+        currency = currency,
         timeZone = timeZone,
         timeSlots = listOf(
             TimeBasedTariff.TimeSlot(
@@ -351,11 +353,11 @@ class TimeBasedTariffCalculatorTest {
             FixedRate(
                 id = RateId(1),
                 price = Price(10),
-                currency = Currency.getInstance("EUR")
+                currency = currency
             ),
             TimeBasedRate(
                 id = RateId(2),
-                currency = Currency.getInstance("EUR"),
+                currency = currency,
                 interval = Interval(1, TimeUnit.DAYS),
                 pricePerInterval = Price(5),
                 minPrice = Price(0),
@@ -392,12 +394,12 @@ class TimeBasedTariffCalculatorTest {
         id = TariffId(1),
         billingInterval = BillingInterval(Interval(1, TimeUnit.DAYS), maxPrice = Price(1200)),
         goodwill = null,
-        currency = Currency.getInstance("EUR"),
+        currency = currency,
         timeZone = timeZone,
         rates = setOf(
             TimeBasedRate(
                 id = RateId(1),
-                currency = Currency.getInstance("EUR"),
+                currency = currency,
                 interval = Interval(30, TimeUnit.MINUTES),
                 basePrice = Price(0),
                 minPrice = Price(0),
@@ -406,7 +408,7 @@ class TimeBasedTariffCalculatorTest {
             ),
             FixedRate(
                 id = RateId(2),
-                currency = Currency.getInstance("EUR"),
+                currency = currency,
                 price = Price(200)
             )
         ),
@@ -613,4 +615,170 @@ class TimeBasedTariffCalculatorTest {
         val receipt = calculator.calculate(rate0268, RentalPeriod(start, end))
         assertThat(receipt.price, equalTo(1200))
     }
+
+    @Test
+    fun `test Rate0268 - 16_00-16_00 - two days`() {
+        val start = ZonedDateTime.of(2022, 1, 1, 16, 0, 0, 0, timeZone.toZoneId()).toInstant()
+        val end = ZonedDateTime.of(2022, 1, 3, 16, 0, 0, 0, timeZone.toZoneId()).toInstant()
+
+        val receipt = calculator.calculate(rate0268, RentalPeriod(start, end))
+        assertThat(receipt.price, equalTo(2400))
+        assertThat(receipt.positions.size, equalTo(1))
+    }
+
+
+    private val tariff342 = TimeBasedTariff(
+        id = TariffId(342),
+        currency = currency,
+        billingInterval = BillingInterval(duration = Interval(1, TimeUnit.DAYS), maxPrice = Price(1000)),
+        timeZone = timeZone,
+        goodwill = FreeMinutes(Interval(60, TimeUnit.MINUTES)),
+        rates = setOf(
+            FixedRate(
+                id = RateId(1),
+                currency = currency,
+                price = Price(300)
+            ),
+            TimeBasedRate(
+                id = RateId(2),
+                currency = currency,
+                interval = Interval(30, TimeUnit.MINUTES),
+                pricePerInterval = Price(100),
+                minPrice = Price(0),
+                maxPrice = Price(Int.MAX_VALUE),
+                basePrice = Price(0)
+            )
+        ),
+        timeSlots = listOf(
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 0,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                rate = RateId(1)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                rate = RateId(2)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.MONDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                rate = RateId(1)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                rate = RateId(2)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.TUESDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                rate = RateId(1)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                rate = RateId(2)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.WEDNESDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                rate = RateId(1)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                rate = RateId(2)
+            ),
+            TimeBasedTariff.TimeSlot(
+                from = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.THURSDAY,
+                    hour = 18,
+                    minutes = 0
+                ),
+                to = TimeBasedTariff.TimeSlot.Time(
+                    DayOfWeek.FRIDAY,
+                    hour = 9,
+                    minutes = 0
+                ),
+                rate = RateId(1)
+            ),
+        )
+    )
+
+
+    //TODO is it right??
+    @Test
+    fun `test rate 342 - Monday 7am to Tuesday 8am`() {
+        val start = ZonedDateTime.of(2022, 1, 3, 7, 0, 0, 0, timeZone.toZoneId()).toInstant()
+        val end = ZonedDateTime.of(2022, 1, 4, 8, 0, 0, 0, timeZone.toZoneId()).toInstant()
+
+        val receipt = calculator.calculate(tariff342, RentalPeriod(start, end))
+        assertThat(receipt.price, equalTo(1300))
+    }
+
 }
