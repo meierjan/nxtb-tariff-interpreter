@@ -38,23 +38,5 @@ internal class FixedRateCalculatorTest {
         assertThat(price.price.credit, equalTo(1000))
     }
 
-    @Test
-    fun `Test Fixed Rate - remainingPrice`() {
-        val price = fixedRateCalculator.calculate(
-            rate1,
-            RateCalculator.RatePeriod(Instant.ofEpochMilli(0), Instant.ofEpochMilli(1), remainingPrice = Price(500))
-        )
-        assertThat(price.price.credit, equalTo(500))
-    }
-
-    @Test
-    fun `Test Fixed Rate - negative remainingPrice`() {
-        val price = fixedRateCalculator.calculate(
-            rate1,
-            RateCalculator.RatePeriod(Instant.ofEpochMilli(0), Instant.ofEpochMilli(1), remainingPrice = Price(-500))
-        )
-        assertThat(price.price.credit, equalTo(0))
-    }
-
 
 }

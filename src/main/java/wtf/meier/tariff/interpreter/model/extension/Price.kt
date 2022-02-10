@@ -9,6 +9,7 @@ operator fun Price.times(times: Int): Price =
 operator fun Price.plus(p2: Price): Price =
     Price(credit + p2.credit)
 
+operator fun Price.minus(b: Price): Price = Price(this.credit - b.credit)
 
 fun max(p1: Price, p2: Price): Price {
     return if (p1.credit < p2.credit) {

@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.minus
 import wtf.meier.tariff.interpreter.model.Interval
+import wtf.meier.tariff.interpreter.model.billingInterval.BillingInterval
 import wtf.meier.tariff.interpreter.model.goodwill.Goodwill
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId

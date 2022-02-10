@@ -21,7 +21,6 @@ class RateCalculator(
     data class RatePeriod(
         val rentalStart: Instant,
         val rentalEnd: Instant,
-        val remainingPrice: Price = Price(Int.MAX_VALUE)
     )
 
     fun calculate(rate: Rate, ratePeriod: RatePeriod): CalculatedPrice =

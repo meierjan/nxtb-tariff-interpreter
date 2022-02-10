@@ -80,23 +80,4 @@ class TimeBaseRateCalculatorTest {
         assertThat(receipt.price.credit, equalTo(1000))
     }
 
-    @Test
-    fun `Test rate1 with remainingPrice`() {
-        val start = Instant.ofEpochMilli(0)
-        val end = Instant.ofEpochMilli(TimeUnit.HOURS.toMillis(5))
-
-        val receipt = calculator.calculate(rate1, RateCalculator.RatePeriod(start, end, Price(500)))
-
-        assertThat(receipt.price.credit, equalTo(500))
-    }
-
-    @Test
-    fun `Test rate1 with negative remainingPrice`() {
-        val start = Instant.ofEpochMilli(0)
-        val end = Instant.ofEpochMilli(TimeUnit.HOURS.toMillis(5))
-
-        val receipt = calculator.calculate(rate1, RateCalculator.RatePeriod(start, end, Price(-500)))
-
-        assertThat(receipt.price.credit, equalTo(0))
-    }
 }

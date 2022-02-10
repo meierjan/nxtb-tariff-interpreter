@@ -1,9 +1,6 @@
 package wtf.meier.tariff.interpreter.model.rate.calculator
 
 import wtf.meier.tariff.interpreter.extension.durationMillis
-import wtf.meier.tariff.interpreter.extension.maxOf
-import wtf.meier.tariff.interpreter.extension.minOf
-import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.extension.max
 import wtf.meier.tariff.interpreter.model.extension.min
 import wtf.meier.tariff.interpreter.model.extension.plus
@@ -32,7 +29,7 @@ class TimeBaseRateCalculator {
         }
 
         return RateCalculator.CalculatedPrice(
-            price = maxOf(minOf(price, ratePeriod.remainingPrice), Price(0)),
+            price = price,
             currency = rate.currency,
             description = description,
             calculationStart = ratePeriod.rentalStart,
