@@ -17,8 +17,10 @@ import java.time.temporal.TemporalAdjusters
 import java.util.concurrent.TimeUnit
 
 class TimeBasedTariffCalculator(
-    private val rateCalculator: RateCalculator = RateCalculator()
-) {
+    private val rateCalculator: RateCalculator = RateCalculator(),
+    private val billingIntervalCalculator: BillingIntervalCalculator = BillingIntervalCalculator,
+
+    ) {
     fun calculate(tariff: TimeBasedTariff, rentalPeriod: RentalPeriod): Receipt {
         val bill = mutableListOf<RateCalculator.CalculatedPrice>()
         if (rentalPeriod.duration <= Interval(0, TimeUnit.MINUTES))
@@ -27,7 +29,7 @@ class TimeBasedTariffCalculator(
                 currency = tariff.currency
             )
 
-        val rentalPeriodToCalculate = BillingIntervalCalculator.calculateRemainingTime(tariff, rentalPeriod)
+        val rentalPeriodToCalculate = billingIntervalCalculator.calculateRemainingTime(tariff, rentalPeriod)
 
 
         val ratesById = tariff.rates.associateBy { it.id }
@@ -95,13 +97,13 @@ class TimeBasedTariffCalculator(
         // if remainingPrice equals 0, the max value of last started billingInterval is reached.
         if (remainingPrice.credit <= 0)
             return mutableListOf(
-                BillingIntervalCalculator.calculateWholeRentalWithBillingIntervalMaxPrice(
+                billingIntervalCalculator.calculateWholeRentalWithBillingIntervalMaxPrice(
                     tariff,
                     rentalPeriod
                 )
             ).toReceipt(currency = tariff.currency, chargedGoodwill = rentalPeriod.chargedGoodwill)
 
-        BillingIntervalCalculator.calculateBillingIntervalPrice(tariff, rentalPeriod)
+        billingIntervalCalculator.calculateBillingIntervalPrice(tariff, rentalPeriod)
             ?.let {
                 bill.add(it)
             }

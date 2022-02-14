@@ -16,7 +16,8 @@ import wtf.meier.tariff.interpreter.util.CyclicListIterator
 import java.util.concurrent.TimeUnit
 
 class SlotBasedTariffCalculator(
-    private val rateCalculator: RateCalculator = RateCalculator()
+    private val rateCalculator: RateCalculator = RateCalculator(),
+    private val billingIntervalCalculator: BillingIntervalCalculator = BillingIntervalCalculator
 ) {
     fun calculate(tariff: SlotBasedTariff, rentalPeriod: RentalPeriod): Receipt {
         val positions = mutableListOf<RateCalculator.CalculatedPrice>()
@@ -27,7 +28,7 @@ class SlotBasedTariffCalculator(
             )
 
         val rentalPeriodToCalculate =
-            BillingIntervalCalculator.calculateRemainingTime(rentalPeriod = rentalPeriod, tariff = tariff)
+            billingIntervalCalculator.calculateRemainingTime(rentalPeriod = rentalPeriod, tariff = tariff)
         var remainingPrice = tariff.billingInterval?.maxPrice ?: Price(Int.MAX_VALUE)
 
         val rateMap = tariff.rates.associateBy { it.id }
@@ -74,13 +75,13 @@ class SlotBasedTariffCalculator(
 
         if (remainingPrice.credit <= 0)
             return mutableListOf(
-                BillingIntervalCalculator.calculateWholeRentalWithBillingIntervalMaxPrice(
+                billingIntervalCalculator.calculateWholeRentalWithBillingIntervalMaxPrice(
                     tariff,
                     rentalPeriod
                 )
             ).toReceipt(currency = tariff.currency, chargedGoodwill = rentalPeriod.chargedGoodwill)
         else
-            BillingIntervalCalculator.calculateBillingIntervalPrice(tariff, rentalPeriod)
+            billingIntervalCalculator.calculateBillingIntervalPrice(tariff, rentalPeriod)
                 ?.let {
                     positions.add(it)
                 }
