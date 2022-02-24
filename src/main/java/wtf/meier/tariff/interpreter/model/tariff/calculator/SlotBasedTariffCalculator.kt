@@ -9,6 +9,7 @@ import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.InvalidTariffFormatException
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
+import wtf.meier.tariff.interpreter.model.tariff.extension.matches
 import wtf.meier.tariff.interpreter.util.CyclicListIterator
 import java.util.concurrent.TimeUnit
 
