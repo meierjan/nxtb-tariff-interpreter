@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.Calculator
 import wtf.meier.tariff.interpreter.model.RentalPeriod
-import wtf.meier.tariff.interpreter.serializer.TariffDeserializer
+import wtf.meier.tariff.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs.testData.PriceChartTester
 import java.io.FileReader
 import java.time.Instant

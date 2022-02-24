@@ -2,16 +2,14 @@ package wtf.meier.tariff.interpreter.model.tariff
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.minus
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.goodwill.Goodwill
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
-import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
-import wtf.meier.tariff.interpreter.serializer.TimeZoneSerializer
+import wtf.meier.tariff.serializer.CurrencySerializer
+import wtf.meier.tariff.serializer.TimeZoneSerializer
 import java.time.DayOfWeek
-import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -28,7 +26,6 @@ sealed class Tariff {
     abstract val billingInterval: Interval?
     abstract val goodwill: Goodwill?
     abstract val currency: Currency
-
 }
 
 @Serializable
@@ -48,16 +45,6 @@ data class SlotBasedTariff(
         val end: Interval?,
         val rate: RateId
     ) {
-        fun matches(start: Instant, end: Instant): Boolean {
-            val duration = end.toEpochMilli() - start.toEpochMilli()
-
-            // we want to exclude users that are riding exactly the amount of where the interval starts
-            // so we start counting at interval + 1 ms
-            val t1 = this.start.durationMillis() + 1
-
-            return t1 <= duration
-        }
-
         val duration: Interval
             get() = end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
     }

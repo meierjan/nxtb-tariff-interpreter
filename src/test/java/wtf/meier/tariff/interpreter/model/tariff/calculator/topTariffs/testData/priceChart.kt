@@ -7,7 +7,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import wtf.meier.tariff.interpreter.Calculator
 import wtf.meier.tariff.interpreter.model.RentalPeriod
-import wtf.meier.tariff.interpreter.serializer.TariffDeserializer
+import wtf.meier.tariff.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import java.io.FileReader
 import java.time.Instant
@@ -17,10 +17,7 @@ import java.util.concurrent.TimeUnit
 data class DataPoint(val start: Long, val end: Long?, val price: Int)
 
 @Serializable
-data class ChartMeta(val fictive_lending_start_time: Long?)
-
-@Serializable
-data class PriceChart(val chart: Array<DataPoint>, val chart_meta: ChartMeta)
+data class PriceChart(val chart: Array<DataPoint>)
 
 
 object PriceChartTester {
@@ -38,16 +35,7 @@ object PriceChartTester {
             val receipt = calculator.calculate(
                 tariff = tariff,
                 rentalPeriod = RentalPeriod(
-                    rentalStart = Instant.ofEpochMilli(
-                        TimeUnit.SECONDS.toMillis(
-                            priceChart.chart_meta?.fictive_lending_start_time ?: 0L + 7200
-                        )
-                    ),
-                    rentalEnd = Instant.ofEpochMilli(
-                        TimeUnit.SECONDS.toMillis(
-                            (priceChart.chart_meta?.fictive_lending_start_time ?: 0) + 86399 + 7200
-                        )
-                    )
+                    rentalEnd = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(dataPoint.end))
                 )
             )
 
