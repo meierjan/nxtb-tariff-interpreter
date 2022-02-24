@@ -1,18 +1,18 @@
 package wtf.meier.tariff.api.route
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import wtf.meier.tariff.api.service.tariff.MockTariffServiceImpl
-import wtf.meier.tariff.api.service.tariff.TariffService
+import wtf.meier.tariff.api.service.tariff.ITariffService
 import wtf.meier.tariff.interpreter.model.tariff.Tariff
 import wtf.meier.tariff.interpreter.model.tariff.TariffId
 
 @RestController
 @RequestMapping("/tariff")
-class TariffRoute {
-
-    private var tariffService: TariffService = MockTariffServiceImpl()
+class TariffRoute(@Autowired @Qualifier("TariffService") val tariffService: ITariffService) {
 
     @PostMapping
     fun createTariff(@RequestBody tariff: Tariff): Mono<Tariff> =
@@ -28,14 +28,14 @@ class TariffRoute {
 
     @PutMapping
     fun setTariff(@RequestBody tariff: Tariff): Mono<Tariff> =
-        tariffService.setTariff(tariff)
+        tariffService.updateTariff(tariff)
 
     @DeleteMapping("/{id}")
-    fun deleteTariff(@PathVariable id: TariffId): Mono<TariffId> =
+    fun deleteTariff(@PathVariable id: TariffId) {
         tariffService.deleteTariff(id)
+    }
 
     @GetMapping("/validate")
     fun validateTariff(@RequestBody tariff: Tariff): Mono<Tariff> =
-        // TODO!
-        Mono.just(tariff)
+        tariffService.validateTariff(tariff)
 }
