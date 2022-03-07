@@ -1,7 +1,7 @@
 package wtf.meier.tariff.api.repository
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Primary
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Controller
 import org.springframework.stereotype.Repository
@@ -22,11 +22,9 @@ data class JsonTariff(
     @Id val id: Long? = null, @Lob val tariff: String? = null
 )
 
-@Controller
-@Qualifier("TariffRepository")
-class TariffRepository(
-    @Autowired private val repository: DBRepository
-) : ITariffRepository {
+@Controller("TariffRepository")
+@Primary
+class TariffRepository(@Autowired val repository: DBRepository ) : ITariffRepository {
 
     override fun getById(id: TariffId): Mono<Tariff> {
         val tariff = repository.findById(id.id)

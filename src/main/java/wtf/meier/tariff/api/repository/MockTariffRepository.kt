@@ -1,6 +1,5 @@
 package wtf.meier.tariff.api.repository
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,8 +15,7 @@ import java.time.DayOfWeek
 import java.time.ZoneId
 import java.util.*
 
-@Component
-@Qualifier("MockTariffRepository")
+@Component("MockTariffRepository")
 class MockTariffRepository : ITariffRepository {
 
     override fun getById(id: TariffId): Mono<Tariff> =
@@ -40,7 +38,7 @@ class MockTariffRepository : ITariffRepository {
     }
 
     override fun deleteById(id: TariffId) {
-        tariffMap.remove(id);
+        tariffMap.remove(id)
     }
 
     private val tariffMap: MutableMap<TariffId, Tariff> = mutableMapOf()
