@@ -11,7 +11,7 @@ import wtf.meier.tariff.interpreter.model.tariff.TariffId
 
 @Service
 @Qualifier("TariffService")
-class TariffService(@Autowired @Qualifier("TariffRepository") override val tariffRepository: ITariffRepository) :
+class TariffService(@Autowired override val tariffRepository: ITariffRepository) :
     ITariffService {
 
     override fun getTariff(tariffId: TariffId): Mono<Tariff> =
