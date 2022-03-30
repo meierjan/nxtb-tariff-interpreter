@@ -59,7 +59,6 @@
         "timeAmount": 30,
         "timeUnit": "MINUTES"
       },
-      "end": null,
       "rate": 2
     }
   ]

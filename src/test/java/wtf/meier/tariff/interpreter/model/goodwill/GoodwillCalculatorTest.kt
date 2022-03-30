@@ -29,11 +29,9 @@ internal class GoodwillCalculatorTest {
         slots = setOf(
             SlotBasedTariff.Slot(
                 start = Interval(0, TimeUnit.SECONDS),
-                end = null,
                 rate = RateId(1)
             ),
         ),
-        billingInterval = null
     )
 
     private val staticGoodwill = StaticGoodwill(Interval(30, TimeUnit.MINUTES))

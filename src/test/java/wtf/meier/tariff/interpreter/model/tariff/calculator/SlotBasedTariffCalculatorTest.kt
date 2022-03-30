@@ -54,8 +54,7 @@ class SlotBasedTariffCalculatorTest {
             ),
             SlotBasedTariff.Slot(
                 start = Interval(2, HOURS),
-                end = null,
-                RateId(1)
+                rate = RateId(1)
             )
         ),
         billingInterval = BillingInterval(duration = Interval(1, TimeUnit.DAYS), maxPrice = Price(12000))
@@ -129,8 +128,7 @@ class SlotBasedTariffCalculatorTest {
         slots = setOf(
             SlotBasedTariff.Slot(
                 start = Interval(0, HOURS),
-                end = null,
-                RateId(1)
+                rate = RateId(1)
             )
         ),
         billingInterval = BillingInterval(Interval(1, TimeUnit.DAYS), maxPrice = Price(1500))
@@ -201,8 +199,7 @@ class SlotBasedTariffCalculatorTest {
             ),
             SlotBasedTariff.Slot(
                 start = Interval(34, MINUTES),
-                end = null,
-                RateId(1)
+                rate = RateId(1)
             )
         ),
         billingInterval = BillingInterval(Interval(20, MINUTES), maxPrice = Price(200))

@@ -55,7 +55,6 @@ class TimeBasedTariffCalculatorTest {
      */
     private val tariff1 = TimeBasedTariff(
         id = TariffId(1),
-        billingInterval = null,
         currency = currency,
         rates = setOf(
             rate1,
@@ -365,7 +364,6 @@ class TimeBasedTariffCalculatorTest {
                 basePrice = Price(0)
             ),
         ),
-        billingInterval = null
     )
 
     @Test

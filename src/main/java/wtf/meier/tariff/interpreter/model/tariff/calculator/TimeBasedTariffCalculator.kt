@@ -2,7 +2,6 @@ package wtf.meier.tariff.interpreter.model.tariff.calculator
 
 import wtf.meier.tariff.interpreter.extension.*
 import wtf.meier.tariff.interpreter.model.Interval
-import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
@@ -35,7 +34,7 @@ class TimeBasedTariffCalculator(
         val ratesById = tariff.rates.associateBy { it.id }
         val zonedRentalStart = rentalPeriodToCalculate.invoicedStart.atZone(tariff.timeZone.toZoneId())
         val zonedRentalEnd = rentalPeriodToCalculate.invoicedEnd.atZone(tariff.timeZone.toZoneId())
-        var remainingPrice = tariff.billingInterval?.maxPrice ?: Price(Int.MAX_VALUE)
+        var remainingPrice = tariff.billingInterval.maxPrice
 
 
         // sort slots by start-time
@@ -97,7 +96,7 @@ class TimeBasedTariffCalculator(
         // if remainingPrice equals 0, the max value of last started billingInterval is reached.
         if (remainingPrice.credit <= 0)
             return mutableListOf(
-                billingIntervalCalculator.calculateWholeRentalWithBillingIntervalMaxPrice(
+                billingIntervalCalculator.calculateTotalRentalWithBillingIntervalMaxPrice(
                     tariff,
                     rentalPeriod
                 )
@@ -111,7 +110,6 @@ class TimeBasedTariffCalculator(
         return bill.toReceipt(currency = tariff.currency, chargedGoodwill = rentalPeriod.chargedGoodwill)
 
     }
-
 
     fun firstIntersectingSlot(list: List<TimeBasedTariff.TimeSlot>, at: ZonedDateTime): TimeBasedTariff.TimeSlot? {
         // Check all slots and choose the one with the closest starting date

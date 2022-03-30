@@ -34,8 +34,7 @@ internal class BillingIntervalCalculatorTest {
             ),
             SlotBasedTariff.Slot(
                 start = Interval(2, TimeUnit.HOURS),
-                end = null,
-                RateId(1)
+                rate = RateId(1)
             )
         ),
         billingInterval = BillingInterval(duration = Interval(1, TimeUnit.DAYS), maxPrice = Price(1000))

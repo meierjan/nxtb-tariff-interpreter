@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class InstantTest {
-    val instantOne = Instant.ofEpochMilli(2)
-    val instantTwo = Instant.ofEpochMilli(3)
+    private val instantOne = Instant.ofEpochMilli(2)
+    private val instantTwo = Instant.ofEpochMilli(3)
 
     @Test
     fun `test minus operator`(){

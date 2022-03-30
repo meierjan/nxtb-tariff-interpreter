@@ -26,7 +26,7 @@ class InvalidTariffFormatException(message: String) : RuntimeException(message)
 sealed class Tariff {
     abstract val id: TariffId
     abstract val rates: Set<Rate>
-    abstract val billingInterval: BillingInterval?
+    abstract val billingInterval: BillingInterval
     abstract val goodwill: Goodwill?
     abstract val currency: Currency
 
@@ -37,7 +37,7 @@ sealed class Tariff {
 data class SlotBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: BillingInterval? = null,
+    override val billingInterval: BillingInterval = BillingInterval(Interval(Int.MAX_VALUE, TimeUnit.DAYS)),
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     override val goodwill: Goodwill? = null,
@@ -46,7 +46,7 @@ data class SlotBasedTariff(
     @Serializable
     data class Slot(
         val start: Interval,
-        val end: Interval?,
+        val end: Interval = Interval(timeAmount = Int.MAX_VALUE, timeUnit = TimeUnit.DAYS),
         val rate: RateId
     ) {
         fun matches(start: Instant, end: Instant): Boolean {
@@ -60,7 +60,7 @@ data class SlotBasedTariff(
         }
 
         val duration: Interval
-            get() = end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
+            get() = end.minus(start)
     }
 
 }
@@ -70,7 +70,7 @@ data class SlotBasedTariff(
 data class TimeBasedTariff(
     override val id: TariffId,
     override val rates: Set<Rate>,
-    override val billingInterval: BillingInterval? = null,
+    override val billingInterval: BillingInterval = BillingInterval(Interval(Int.MAX_VALUE, TimeUnit.DAYS)),
     override val goodwill: Goodwill? = null,
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
