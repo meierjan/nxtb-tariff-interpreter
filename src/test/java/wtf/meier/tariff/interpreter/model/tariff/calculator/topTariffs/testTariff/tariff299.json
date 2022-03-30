@@ -33,8 +33,13 @@
     }
   ],
   "billingInterval": {
-    "timeAmount": 1,
-    "timeUnit": "DAYS"
+    "duration": {
+      "timeAmount": 1,
+      "timeUnit": "DAYS"
+    },
+    "maxPrice": {
+      "credit": 15000
+    }
   },
   "slots": [
     {
@@ -42,7 +47,6 @@
         "timeAmount": 0,
         "timeUnit": "MINUTES"
       },
-      "end": null,
       "rate": 1
     }
   ]

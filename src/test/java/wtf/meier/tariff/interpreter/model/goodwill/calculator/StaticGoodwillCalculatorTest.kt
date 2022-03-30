@@ -25,9 +25,10 @@ internal class StaticGoodwillCalculatorTest {
             )
         ), slots = setOf(
             SlotBasedTariff.Slot(
-                start = Interval(0, TimeUnit.SECONDS), end = null, rate = RateId(1)
+                start = Interval(0, TimeUnit.SECONDS), rate = RateId(1)
             ),
-        ), billingInterval = null, goodwill = StaticGoodwill(
+        ),
+        goodwill = StaticGoodwill(
             duration = Interval(30, TimeUnit.MINUTES)
         )
 

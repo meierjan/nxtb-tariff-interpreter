@@ -2,16 +2,14 @@ package wtf.meier.tariff.interpreter.model.rate.calculator
 
 import wtf.meier.tariff.interpreter.model.rate.FixedRate
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
-import java.time.Instant
 
 class FixedRateCalculator {
-    fun calculate(rate: FixedRate, rentalStart: Instant, rentalEnd: Instant): RateCalculator.CalculatedPrice =
+    fun calculate(rate: FixedRate, ratePeriod: RateCalculator.RatePeriod): RateCalculator.CalculatedPrice =
         RateCalculator.CalculatedPrice(
             price = rate.price,
             currency = rate.currency,
             description = "Fixed Price",
-            calculationStart = rentalStart,
-            calculationEnd = rentalEnd
+            calculationStart = ratePeriod.rentalStart,
+            calculationEnd = ratePeriod.rentalEnd
         )
-
 }

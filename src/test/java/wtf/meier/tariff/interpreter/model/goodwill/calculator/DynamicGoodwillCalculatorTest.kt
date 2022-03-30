@@ -31,13 +31,10 @@ internal class DynamicGoodwillCalculatorTest {
         slots = setOf(
             SlotBasedTariff.Slot(
                 start = Interval(0, TimeUnit.SECONDS),
-                end = null,
                 rate = RateId(1)
             ),
         ),
-        billingInterval = null,
         goodwill = DynamicGoodwill(deductibleProportionInPercentage = 10f)
-
     )
 
     @Test

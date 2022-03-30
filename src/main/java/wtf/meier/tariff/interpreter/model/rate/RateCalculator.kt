@@ -18,9 +18,14 @@ class RateCalculator(
         val calculationEnd: Instant
     )
 
-    fun calculate(rate: Rate, rentalStart: Instant, rentalEnd: Instant): CalculatedPrice =
+    data class RatePeriod(
+        val rentalStart: Instant,
+        val rentalEnd: Instant,
+    )
+
+    fun calculate(rate: Rate, ratePeriod: RatePeriod): CalculatedPrice =
         when (rate) {
-            is TimeBasedRate -> timeBaseRateCalculator.calculate(rate, rentalStart, rentalEnd)
-            is FixedRate -> fixedRateCalculator.calculate(rate, rentalStart, rentalEnd)
+            is TimeBasedRate -> timeBaseRateCalculator.calculate(rate, ratePeriod)
+            is FixedRate -> fixedRateCalculator.calculate(rate, ratePeriod)
         }
 }

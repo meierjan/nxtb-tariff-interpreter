@@ -44,7 +44,6 @@
         "timeAmount": 60,
         "timeUnit": "MINUTES"
       },
-      "end": null,
       "rate": 1
     }
   ]

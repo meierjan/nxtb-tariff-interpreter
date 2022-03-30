@@ -2,73 +2,100 @@ package wtf.meier.tariff.interpreter.model.tariff.calculator
 
 import wtf.meier.tariff.interpreter.extension.durationMillis
 import wtf.meier.tariff.interpreter.extension.plus
-import wtf.meier.tariff.interpreter.model.Interval
+import wtf.meier.tariff.interpreter.extension.toInstant
 import wtf.meier.tariff.interpreter.model.Receipt
 import wtf.meier.tariff.interpreter.model.RentalPeriod
+import wtf.meier.tariff.interpreter.model.billingInterval.BillingIntervalCalculator
+import wtf.meier.tariff.interpreter.model.extension.minus
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.InvalidTariffFormatException
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
-import wtf.meier.tariff.interpreter.util.CyclicList
-import java.util.concurrent.TimeUnit
+import wtf.meier.tariff.interpreter.util.CyclicListIterator
 
 class SlotBasedTariffCalculator(
-    private val rateCalculator: RateCalculator = RateCalculator()
+    private val rateCalculator: RateCalculator = RateCalculator(),
+    private val billingIntervalCalculator: BillingIntervalCalculator = BillingIntervalCalculator
 ) {
-
     fun calculate(tariff: SlotBasedTariff, rentalPeriod: RentalPeriod): Receipt {
-        val positions = mutableListOf<RateCalculator.CalculatedPrice>()
-        val rateMap = tariff.rates.associateBy { it.id }
+        val bill = mutableListOf<RateCalculator.CalculatedPrice>()
 
-        var slotStart = rentalPeriod.invoicedStart
-
-        if (rentalPeriod.invoicedStart >= rentalPeriod.invoicedEnd) return positions.toReceipt(
-            currency = tariff.currency,
-            chargedGoodwill = rentalPeriod.chargedGoodwill
-        )
-
-        var currentBillingEnd = if (tariff.billingInterval == null) {
-            rentalPeriod.invoicedEnd
-        } else {
-            rentalPeriod.invoicedStart.plus(tariff.billingInterval)
-        }
-
-        val filteredSlots = tariff.slots.filter { it.matches(rentalPeriod.invoicedStart, currentBillingEnd) }
-        val sortedSlots = filteredSlots.sortedBy { it.end?.durationMillis() ?: Long.MAX_VALUE }
-        val sortedCyclicSlots = CyclicList(sortedSlots)
-        var currentSlotIndex = 0
-
-        var slotEnd =
-            minOf(
-                rentalPeriod.invoicedEnd,
-                currentBillingEnd,
-                slotStart.plus(sortedCyclicSlots[currentSlotIndex].end ?: Interval(Integer.MAX_VALUE, TimeUnit.DAYS))
+        // if calculation-end before calculation-start return immediately
+        if (rentalPeriod.invoicedStart >= rentalPeriod.invoicedEnd)
+            return bill.toReceipt(
+                currency = tariff.currency,
+                chargedGoodwill = rentalPeriod.chargedGoodwill
             )
 
-        while (slotStart < rentalPeriod.invoicedEnd) {
+        val rentalPeriodToCalculate =
+            billingIntervalCalculator.calculateRemainingTime(rentalPeriod = rentalPeriod, tariff = tariff)
 
-            val rate = rateMap[sortedCyclicSlots[currentSlotIndex].rate]
-                ?: throw InvalidTariffFormatException("Rate with id ${sortedCyclicSlots[currentSlotIndex].rate.id} referenced but not defined")
+        // max price of the last started interval
+        var remainingPrice = tariff.billingInterval.maxPrice
+        val rateMap = tariff.rates.associateBy { it.id }
+        var slotStart = rentalPeriodToCalculate.invoicedStart
 
-            positions.add(rateCalculator.calculate(rate, slotStart, slotEnd))
+        // remove all slots that do not intersect the rental
+        val filteredSlots = tariff.slots.filter {
+            it.matches(
+                rentalPeriodToCalculate.invoicedStart,
+                rentalPeriodToCalculate.invoicedEnd
+            )
+        }
+
+        //sort slots by start-time
+        val sortedSlots = filteredSlots.sortedBy { it.end.durationMillis() }
+        val slotIterator = CyclicListIterator(sortedSlots)
+        var currentSlot = slotIterator.next()
+
+        // slot end is min of rental end or slot end
+        var slotEnd =
+            minOf(
+                rentalPeriodToCalculate.invoicedEnd,
+                slotStart.plus(currentSlot.end)
+            )
+
+        // calculates price of each slot
+        while (slotStart < rentalPeriodToCalculate.invoicedEnd) {
+            val rate = rateMap[currentSlot.rate]
+                ?: throw InvalidTariffFormatException("Rate with id ${currentSlot.rate.id} referenced but not defined")
+
+            // calculates price of current slot
+            val position = rateCalculator.calculate(
+                rate,
+                RateCalculator.RatePeriod(rentalStart = slotStart, rentalEnd = slotEnd)
+            )
+            bill.add(position)
+
+            // subtraction of the current slot price from remaining price
+            remainingPrice -= position.price
+            // if remaining price lesser than zero, the maxBillingIntervalPrice will be calculated
+            if (remainingPrice.credit <= 0) break
 
             slotStart = slotEnd
-            if (tariff.billingInterval != null && currentBillingEnd == slotEnd) {
-                currentBillingEnd = currentBillingEnd.plus(tariff.billingInterval)
-            }
-            if (currentBillingEnd != slotEnd) {
-                currentSlotIndex++
-            }
+            currentSlot = slotIterator.next()
             slotEnd =
                 minOf(
-                    rentalPeriod.invoicedEnd,
-                    currentBillingEnd,
-                    slotStart.plus(sortedCyclicSlots[currentSlotIndex].duration)
+                    rentalPeriodToCalculate.invoicedEnd,
+                    currentSlot.end.toInstant()
                 )
         }
-        return positions.toReceipt(
-            currency = tariff.currency,
-            chargedGoodwill = rentalPeriod.chargedGoodwill
-        )
+
+        // calculate total rental with billing interval max price if cheaper than calculate last billing-interval regular
+        if (remainingPrice.credit <= 0)
+            return mutableListOf(
+                billingIntervalCalculator.calculateTotalRentalWithBillingIntervalMaxPrice(
+                    tariff,
+                    rentalPeriod
+                )
+            ).toReceipt(currency = tariff.currency, chargedGoodwill = rentalPeriod.chargedGoodwill)
+        else
+        // calculate last started billing-interval regular
+            billingIntervalCalculator.calculateBillingIntervalPrice(tariff, rentalPeriod)
+                ?.let {
+                    bill.add(it)
+                }
+
+        return bill.toReceipt(currency = tariff.currency, chargedGoodwill = rentalPeriod.chargedGoodwill)
     }
 }

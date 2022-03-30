@@ -64,7 +64,6 @@
       }
     }
   ],
-  "billingInterval": null,
   "slots": [
     {
       "start": {
@@ -115,7 +114,6 @@
         "timeAmount": 12,
         "timeUnit": "HOURS"
       },
-      "end": null,
       "rate": 5
     }
   ]

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.rate.RateId
 import wtf.meier.tariff.interpreter.model.rate.TimeBasedRate
 import java.time.Instant
@@ -39,7 +40,7 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(0)
 
-        val receipt = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, RateCalculator.RatePeriod(start, end))
 
         // 0 seconds = base_price
         assertThat(receipt.price.credit, equalTo(50))
@@ -51,7 +52,7 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(30))
 
-        val receipt = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, RateCalculator.RatePeriod(start, end))
 
         // seconds + 1 * interval
         assertThat(receipt.price.credit, equalTo(250))
@@ -62,7 +63,7 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(120))
 
-        val receipt = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, RateCalculator.RatePeriod(start, end))
 
         // base_price (50) + 4 * interval (200)
         assertThat(receipt.price.credit, equalTo(850))
@@ -73,7 +74,7 @@ class TimeBaseRateCalculatorTest {
         val start = Instant.ofEpochMilli(0)
         val end = Instant.ofEpochMilli(TimeUnit.HOURS.toMillis(5))
 
-        val receipt = calculator.calculate(rate1, start, end)
+        val receipt = calculator.calculate(rate1, RateCalculator.RatePeriod(start, end))
 
         // base (50) + 10 * interval (200) > 1000 -> max_price
         assertThat(receipt.price.credit, equalTo(1000))

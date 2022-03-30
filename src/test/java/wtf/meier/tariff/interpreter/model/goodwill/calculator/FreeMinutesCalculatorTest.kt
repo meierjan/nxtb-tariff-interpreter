@@ -31,15 +31,12 @@ internal class FreeMinutesCalculatorTest {
         slots = setOf(
             SlotBasedTariff.Slot(
                 start = Interval(0, TimeUnit.SECONDS),
-                end = null,
                 rate = RateId(1)
             ),
         ),
-        billingInterval = null,
         goodwill = FreeMinutes(
             duration = Interval(30, TimeUnit.MINUTES)
         )
-
     )
 
 
