@@ -9,7 +9,8 @@ import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.InvalidTariffFormatException
 import wtf.meier.tariff.interpreter.model.tariff.SlotBasedTariff
-import wtf.meier.tariff.interpreter.util.CyclicList
+import wtf.meier.tariff.interpreter.model.tariff.extension.matches
+import wtf.meier.tariff.interpreter.util.CyclicListIterator
 import java.util.concurrent.TimeUnit
 
 class SlotBasedTariffCalculator(
@@ -35,20 +36,23 @@ class SlotBasedTariffCalculator(
 
         val filteredSlots = tariff.slots.filter { it.matches(rentalPeriod.invoicedStart, currentBillingEnd) }
         val sortedSlots = filteredSlots.sortedBy { it.end?.durationMillis() ?: Long.MAX_VALUE }
-        val sortedCyclicSlots = CyclicList(sortedSlots)
-        var currentSlotIndex = 0
+        val slotIterator = CyclicListIterator(sortedSlots)
+
+
+        var currentSlot = slotIterator.next()
+
 
         var slotEnd =
             minOf(
                 rentalPeriod.invoicedEnd,
                 currentBillingEnd,
-                slotStart.plus(sortedCyclicSlots[currentSlotIndex].end ?: Interval(Integer.MAX_VALUE, TimeUnit.DAYS))
+                slotStart.plus(currentSlot.end ?: Interval(Integer.MAX_VALUE, TimeUnit.DAYS))
             )
 
         while (slotStart < rentalPeriod.invoicedEnd) {
 
-            val rate = rateMap[sortedCyclicSlots[currentSlotIndex].rate]
-                ?: throw InvalidTariffFormatException("Rate with id ${sortedCyclicSlots[currentSlotIndex].rate.id} referenced but not defined")
+            val rate = rateMap[currentSlot.rate]
+                ?: throw InvalidTariffFormatException("Rate with id ${currentSlot.rate.id} referenced but not defined")
 
             positions.add(rateCalculator.calculate(rate, slotStart, slotEnd))
 
@@ -57,14 +61,14 @@ class SlotBasedTariffCalculator(
                 currentBillingEnd = currentBillingEnd.plus(tariff.billingInterval)
             }
             if (currentBillingEnd != slotEnd) {
-                currentSlotIndex++
-            }
+                currentSlot = slotIterator.next()            }
             slotEnd =
                 minOf(
                     rentalPeriod.invoicedEnd,
                     currentBillingEnd,
-                    slotStart.plus(sortedCyclicSlots[currentSlotIndex].duration)
+                    slotStart.plus(currentSlot.duration)
                 )
+
         }
         return positions.toReceipt(
             currency = tariff.currency,

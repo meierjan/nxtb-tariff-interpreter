@@ -1,0 +1,203 @@
+{
+  "type": "TimeBasedTariff",
+  "id": 342,
+  "rates": [
+    {
+      "type": "TimeBasedRate",
+      "id": 1,
+      "currency": "EUR",
+      "interval": {
+        "timeAmount": 30,
+        "timeUnit": "MINUTES"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 100
+      },
+      "maxPrice": {
+        "credit": 300
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    },
+    {
+      "type": "TimeBasedRate",
+      "id": 2,
+      "currency": "EUR",
+      "interval": {
+        "timeAmount": 30,
+        "timeUnit": "MINUTES"
+      },
+      "basePrice": {
+        "credit": 0
+      },
+      "pricePerInterval": {
+        "credit": 100
+      },
+      "maxPrice": {
+        "credit": 900
+      },
+      "minPrice": {
+        "credit": 0
+      }
+    }
+  ],
+  "billingInterval": null,
+  "goodwill": {
+    "type": "FreeMinutes",
+    "duration": {
+      "timeAmount": 1,
+      "timeUnit": "HOURS"
+    }
+  },
+  "currency": "EUR",
+  "timeZone": "GMT+2",
+  "timeSlots": [
+    {
+      "from": {
+        "day": "MONDAY",
+        "hour": 0,
+        "minutes": 0
+      },
+      "to": {
+        "day": "MONDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "rate": 1
+    },
+    {
+      "from": {
+        "day": "MONDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "to": {
+        "day": "MONDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "rate": 2
+    },
+    {
+      "from": {
+        "day": "MONDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "to": {
+        "day": "TUESDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "rate": 1
+    },
+    {
+      "from": {
+        "day": "TUESDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "to": {
+        "day": "WEDNESDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "rate": 2
+    },
+    {
+      "from": {
+        "day": "WEDNESDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "to": {
+        "day": "THURSDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "rate": 1
+    },
+    {
+      "from": {
+        "day": "THURSDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "to": {
+        "day": "THURSDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "rate": 2
+    },
+    {
+      "from": {
+        "day": "THURSDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "to": {
+        "day": "FRIDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "rate": 1
+    },
+    {
+      "from": {
+        "day": "FRIDAY",
+        "hour": 9,
+        "minutes": 0
+      },
+      "to": {
+        "day": "FRIDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "rate": 2
+    },
+    {
+      "from": {
+        "day": "FRIDAY",
+        "hour": 18,
+        "minutes": 0
+      },
+      "to": {
+        "day": "SATURDAY",
+        "hour": 0,
+        "minutes": 0
+      },
+      "rate": 1
+    },
+    {
+      "from": {
+        "day": "SATURDAY",
+        "hour": 0,
+        "minutes": 0
+      },
+      "to": {
+        "day": "SUNDAY",
+        "hour": 0,
+        "minutes": 0
+      },
+      "rate": 2
+    },
+    {
+      "from": {
+        "day": "SUNDAY",
+        "hour": 0,
+        "minutes": 0
+      },
+      "to": {
+        "day": "MONDAY",
+        "hour": 0,
+        "minutes": 0
+      },
+      "rate": 2
+    }
+  ]
+}

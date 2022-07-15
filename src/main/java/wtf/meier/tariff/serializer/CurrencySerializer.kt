@@ -1,4 +1,4 @@
-package wtf.meier.tariff.interpreter.serializer
+package wtf.meier.tariff.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -12,6 +12,7 @@ object CurrencySerializer : KSerializer<Currency> {
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Currency", PrimitiveKind.STRING)
 
+    // TODO: handle exception!
     override fun deserialize(decoder: Decoder): Currency = Currency.getInstance(decoder.decodeString())
 
     override fun serialize(encoder: Encoder, value: Currency) = encoder.encodeString(value.currencyCode)

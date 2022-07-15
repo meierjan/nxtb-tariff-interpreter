@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import wtf.meier.tariff.interpreter.Calculator
 import wtf.meier.tariff.interpreter.model.RentalPeriod
-import wtf.meier.tariff.interpreter.serializer.TariffDeserializer
+import wtf.meier.tariff.serializer.TariffDeserializer
 import wtf.meier.tariff.interpreter.model.tariff.calculator.topTariffs.testData.PriceChartTester
 import java.io.FileReader
 import java.time.Instant
@@ -18,10 +18,12 @@ class topTariffsTest {
         val receipt = Calculator().calculate(
             tariff = TariffDeserializer.deserializeTariff(FileReader("src/test/java/wtf/meier/tariff/interpreter/model/tariff/calculator/topTariffs//testTariff/tariff10.json").readText()),
             rentalPeriod = RentalPeriod(
-                Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(0)),Instant.ofEpochMilli(1000000)
-            ))
+                Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(0)), Instant.ofEpochMilli(1000000)
+            )
+        )
 
-                    assertThat (receipt.price, equalTo(0)
+        assertThat(
+            receipt.price, equalTo(0)
         )
 
     }
