@@ -11,8 +11,8 @@ class TariffCalculator(
 ) {
 
     fun calculate(tariff: Tariff, rentalPeriod: RentalPeriod): Receipt =
-        when (tariff) {
-            is SlotBasedTariff -> slotBasedTariffCalculator.calculate(tariff, rentalPeriod)
-            is TimeBasedTariff -> timeBasedTariffCalculator.calculate(tariff, rentalPeriod)
-        }
+            when (tariff) {
+                is SlotBasedTariff -> slotBasedTariffCalculator.calculate(tariff, rentalPeriod)
+                is TimeBasedTariff -> timeBasedTariffCalculator.calculate(tariff, rentalPeriod)
+            }
 }

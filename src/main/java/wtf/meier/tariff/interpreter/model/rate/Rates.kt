@@ -1,10 +1,11 @@
 package wtf.meier.tariff.interpreter.model.rate
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import wtf.meier.tariff.serializer.CurrencySerializer
+import kotlinx.serialization.*
+import wtf.meier.tariff.interpreter.IVisitable
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
+import wtf.meier.tariff.interpreter.IVisitor
+import wtf.meier.tariff.serializer.CurrencySerializer
 import java.util.*
 
 // changed from inline to data class, because inline classes are unsupported by kotlin serialization
@@ -13,10 +14,11 @@ import java.util.*
 value class RateId(val id: Long)
 
 @Serializable
-sealed class Rate {
+sealed class Rate : IVisitable {
     abstract val id: RateId
     abstract val currency: Currency
 
+    abstract override fun accept(visitor: IVisitor)
 }
 
 @Serializable
@@ -30,7 +32,11 @@ data class TimeBasedRate(
     val pricePerInterval: Price,
     val maxPrice: Price,
     val minPrice: Price
-) : Rate()
+) : Rate() {
+    override fun accept(visitor: IVisitor) {
+        visitor.visitTimeBasedRate(this)
+    }
+}
 
 @Serializable
 @SerialName("FixedRate")
@@ -39,4 +45,8 @@ data class FixedRate(
     @Serializable(with = CurrencySerializer::class)
     override val currency: Currency,
     val price: Price
-) : Rate()
+) : Rate() {
+    override fun accept(visitor: IVisitor) {
+        visitor.visitFixedRate(this)
+    }
+}
