@@ -6,8 +6,9 @@ import wtf.meier.tariff.interpreter.model.RentalPeriod
 import wtf.meier.tariff.interpreter.model.extension.toReceipt
 import wtf.meier.tariff.interpreter.model.rate.RateCalculator
 import wtf.meier.tariff.interpreter.model.tariff.TimeBasedTariff
-import wtf.meier.tariff.interpreter.util.CyclicList
+import wtf.meier.tariff.interpreter.util.CyclicListIterator
 import java.time.Duration
+import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.TemporalAdjusters
 
@@ -28,8 +29,8 @@ class TimeBasedTariffCalculator(
             ?: throw RuntimeException("not slot found -> slots need to be exhaustive")
 
 
-        val slotIterator = CyclicList(sortedSlots).listIterator()
-            .forwardBefore(firstIntersectingSlot)
+        val slotIterator = CyclicListIterator(sortedSlots)
+                .forwardBefore(firstIntersectingSlot)
 
 
         val bill = mutableListOf<RateCalculator.CalculatedPrice>()
@@ -72,7 +73,6 @@ class TimeBasedTariffCalculator(
             chargedGoodwill = rentalPeriod.chargedGoodwill
         )
     }
-
 
     fun firstIntersectingSlot(list: List<TimeBasedTariff.TimeSlot>, at: ZonedDateTime): TimeBasedTariff.TimeSlot? {
         // Check all slots and choose the one with the closest starting date

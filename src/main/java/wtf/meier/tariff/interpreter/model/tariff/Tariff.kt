@@ -13,7 +13,6 @@ import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.serializer.TimeZoneSerializer
 import wtf.meier.tariff.interpreter.IVisitor
 import java.time.DayOfWeek
-import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -30,7 +29,6 @@ sealed class Tariff : IVisitable {
     abstract val billingInterval: Interval?
     abstract val goodwill: Goodwill?
     abstract val currency: Currency
-
     abstract override fun accept(visitor: IVisitor)
 }
 
@@ -64,7 +62,7 @@ data class SlotBasedTariff(
         override fun accept(visitor: IVisitor) {
             visitor.visitSlot(this)
         }
-
+        
         val duration: Interval
             get() = end?.minus(start) ?: Interval(Int.MAX_VALUE, TimeUnit.DAYS)
     }

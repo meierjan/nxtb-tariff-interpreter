@@ -1,4 +1,4 @@
-package wtf.meier.tariff.interpreter.serializer
+package wtf.meier.tariff.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -11,6 +11,7 @@ import java.util.*
 
 object TimeZoneSerializer : KSerializer<TimeZone> {
 
+    //Todo: handle exception
     override fun deserialize(decoder: Decoder): TimeZone = TimeZone.getTimeZone(ZoneId.of(decoder.decodeString()))
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("TimeZone", PrimitiveKind.STRING)

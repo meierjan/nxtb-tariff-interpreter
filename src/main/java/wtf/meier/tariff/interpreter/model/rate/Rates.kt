@@ -1,7 +1,7 @@
 package wtf.meier.tariff.interpreter.model.rate
 
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializabl
 import wtf.meier.tariff.interpreter.IVisitable
 import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.model.Interval

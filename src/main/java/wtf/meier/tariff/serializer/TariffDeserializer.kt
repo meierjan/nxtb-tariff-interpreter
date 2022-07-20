@@ -1,6 +1,7 @@
-package wtf.meier.tariff.interpreter.serializer
+package wtf.meier.tariff.serializer
 
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -39,5 +40,10 @@ object TariffDeserializer {
         classDiscriminator = "type"
     }
 
-    fun deserializeTariff(serializedTariff: String): Tariff = format.decodeFromString(serializedTariff)
+    fun deserializeTariff(serializedTariff: String): Tariff =
+        //TODO: handle exception!
+        format.decodeFromString(serializedTariff)
+
+
+    fun serializeTariff(tariff: Tariff): String = format.encodeToString(tariff)
 }
