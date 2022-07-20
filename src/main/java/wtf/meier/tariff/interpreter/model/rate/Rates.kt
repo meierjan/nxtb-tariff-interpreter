@@ -1,12 +1,11 @@
 package wtf.meier.tariff.interpreter.model.rate
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializabl
+import kotlinx.serialization.*
 import wtf.meier.tariff.interpreter.IVisitable
-import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
 import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.Price
 import wtf.meier.tariff.interpreter.IVisitor
+import wtf.meier.tariff.serializer.CurrencySerializer
 import java.util.*
 
 // changed from inline to data class, because inline classes are unsupported by kotlin serialization

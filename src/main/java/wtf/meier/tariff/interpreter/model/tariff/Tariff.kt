@@ -9,10 +9,11 @@ import wtf.meier.tariff.interpreter.model.Interval
 import wtf.meier.tariff.interpreter.model.goodwill.Goodwill
 import wtf.meier.tariff.interpreter.model.rate.Rate
 import wtf.meier.tariff.interpreter.model.rate.RateId
-import wtf.meier.tariff.interpreter.serializer.CurrencySerializer
-import wtf.meier.tariff.interpreter.serializer.TimeZoneSerializer
 import wtf.meier.tariff.interpreter.IVisitor
+import wtf.meier.tariff.serializer.CurrencySerializer
+import wtf.meier.tariff.serializer.TimeZoneSerializer
 import java.time.DayOfWeek
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
