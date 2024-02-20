@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,12 +8,12 @@ plugins {
     alias(libs.plugins.kotlinBinaryCompatibilityValidator)
     alias(libs.plugins.kotlinKover)
     alias(libs.plugins.dokka)
-    id("maven-publish")
+    alias(libs.plugins.mavenPublish)
     id("signing")
 }
 
 group = "wtf.meier.tariffinterpreter"
-version = "0.1.0"
+version = "0.1.0-SNAPSHOT"
 
 kotlin {
     androidTarget {
@@ -21,6 +22,7 @@ kotlin {
                 jvmTarget = "1.8"
             }
         }
+        publishLibraryVariants("release", "debug")
     }
 
     listOf(
@@ -57,65 +59,48 @@ repositories {
     mavenCentral()
 }
 
+mavenPublishing {
 
-val javadocJar = tasks.register<Jar>("javadocJar") {
-//    dependsOn(tasks)
-    archiveClassifier.set("javadoc")
-    from("$buildDir/dokka")
-}
+    publishToMavenCentral(SonatypeHost.DEFAULT)
+    signAllPublications()
 
-val repoUrl = "https://github.com/meierjan/nxtb-tariff-interpreter"
-extensions.configure<PublishingExtension> {
-    publications {
-        withType<MavenPublication> {
-            artifact(javadocJar)
 
-            pom {
-                name.set("nextbike tariff interpreter")
-                description.set("A library to interpret nextbike tariffs and to calculate their prices")
-                licenses {
-                    license {
-                        name.set("Apache-2.0")
-                        url.set("https://opensource.org/licenses/Apache-2.0")
-                    }
-                }
-                url.set(repoUrl)
-                issueManagement {
-                    system.set("Github")
-                    url.set("${repoUrl}/issues")
-                }
-                scm {
-                    connection.set("$repoUrl.git")
-                    url.set(repoUrl)
-                }
-                developers {
-                    developer {
-                        name.set("Jan Meier")
-                        email.set("tariff-interpreter@meier.dev")
-                    }
-                }
+    val repoUrl = "https://github.com/meierjan/nxtb-tariff-interpreter"
+
+    coordinates("wtf.meier", "tariff-interpreter", "0.1")
+
+    pom {
+        name.set("nextbike tariff interpreter")
+        description.set("A library to interpret nextbike tariffs and to calculate their prices")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        url.set(repoUrl)
+        issueManagement {
+            system.set("Github")
+            url.set("${repoUrl}/issues")
+        }
+        scm {
+            connection.set("$repoUrl.git")
+            url.set(repoUrl)
+        }
+        developers {
+            developer {
+                name.set("Jan Meier")
+                email.set("jan@meier.wtf")
             }
         }
     }
-
-
-    val publishing = extensions.getByType<PublishingExtension>()
-    extensions.configure<SigningExtension> {
-        useInMemoryPgpKeys(
-            gradleLocalProperties(rootDir).getProperty("gpgKeySecret"),
-            gradleLocalProperties(rootDir).getProperty("gpgKeyPassword"),
-        )
-
-        sign(publishing.publications)
-    }
-
-    // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
-    project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
-        dependsOn(project.tasks.withType(Sign::class.java))
-    }
-
 }
+signing {
+    useInMemoryPgpKeys(
+        gradleLocalProperties(rootDir).getProperty("gpgKeySecret"),
+        gradleLocalProperties(rootDir).getProperty("gpgKeyPassword"),
 
-koverMerged {
-    enable()
+        )
+    sign(publishing.publications)
 }
