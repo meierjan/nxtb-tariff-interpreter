@@ -7,6 +7,12 @@ jobs:
     name: Build and Run Tests
     runs-on: ubuntu-latest
     steps:
+      - name: setup Java version
+        uses: actions/setup-java@v4
+        with: 
+          distribution: 'temurin'
+          java-version: '21'
+          check-latest: true
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Build and Run Tests
@@ -21,6 +27,12 @@ jobs:
     name: Push to sonatype
     runs-on: ubuntu-latest
     steps:
+      - name: setup Java version
+        uses: actions/setup-java@v4
+        with: 
+          distribution: 'temurin'
+          java-version: '21'
+          check-latest: true
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Run grade push task
