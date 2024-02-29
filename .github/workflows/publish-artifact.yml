@@ -1,0 +1,35 @@
+name: Publish artifact
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+jobs:
+  push:
+    name: Push to sonatype
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup Java version
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          check-latest: true
+      - name: Get latest version tag
+        id: version
+        uses: 32teeth/action-github-tag@v1.0.7
+        with:
+          numbers_only: true
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Run grade push task
+        run: ./gradlew publishAllPublicationsToCentralPortal
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          VERSION_TAG: ${{ steps.tag.outputs.version }}

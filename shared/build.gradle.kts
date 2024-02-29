@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -65,7 +64,7 @@ koverMerged {
 
 
 mavenPublishing {
-    coordinates("wtf.meier.tariffinterpreter", "tariffinterpreter", "0.1.0")
+    coordinates("wtf.meier.tariffinterpreter", "tariffinterpreter", System.getenv("VERSION_TAG"))
 
     pom {
         name.set("nextbike tariff interpreter")
