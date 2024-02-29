@@ -38,7 +38,7 @@ jobs:
           check-latest: true
       - name: Get version tag
         id: version
-        uses: 32teeth/action-github-tag@v1
+        uses: 32teeth/action-github-tag@v1.0.7
         with:
           numbers_only: true
       - name: Checkout Code
