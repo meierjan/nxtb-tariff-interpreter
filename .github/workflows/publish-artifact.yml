@@ -1,38 +1,27 @@
-name: build
+name: Publish artifact
 
-on: push
-
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
 jobs:
-  build:
-    name: Build and Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: setup Java version
-        uses: actions/setup-java@v4
-        with: 
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Build and Run Tests
-        run: ./gradlew test
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v2
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
   push:
     name: Push to sonatype
     runs-on: ubuntu-latest
     steps:
       - name: setup Java version
         uses: actions/setup-java@v4
-        with: 
+        with:
           distribution: 'temurin'
           java-version: '21'
           check-latest: true
+      - name: Get latest version tag
+        id: version
+        uses: 32teeth/action-github-tag@v1.0.7
+        with:
+          numbers_only: true
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Run grade push task
@@ -43,3 +32,4 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          VERSION_TAG: ${{ steps.tag.outputs.version }}

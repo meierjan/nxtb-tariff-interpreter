@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -8,12 +6,12 @@ plugins {
     alias(libs.plugins.kotlinBinaryCompatibilityValidator)
     alias(libs.plugins.kotlinKover)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.mavenPublish)
-    id("signing")
+    id("com.vanniktech.maven.publish") version "0.27.0"
+    id("com.gradleup.nmcp") version "0.0.4"
 }
 
 group = "wtf.meier.tariffinterpreter"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 
 kotlin {
     androidTarget {
@@ -54,24 +52,25 @@ android {
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
+val javadocJar = tasks.register<Jar>("javadocJar") {
+//    dependsOn(tasks)
+    archiveClassifier.set("javadoc")
+    from("$buildDir/dokka")
 }
 
+koverMerged {
+    enable()
+}
+
+
 mavenPublishing {
-
-    publishToMavenCentral(SonatypeHost.DEFAULT)
-    signAllPublications()
-
-
-    val repoUrl = "https://github.com/meierjan/nxtb-tariff-interpreter"
-
-    coordinates("wtf.meier", "tariff-interpreter", "0.1")
+    coordinates("wtf.meier.tariffinterpreter", "tariffinterpreter", System.getenv("VERSION_TAG"))
 
     pom {
         name.set("nextbike tariff interpreter")
-        description.set("A library to interpret nextbike tariffs and to calculate their prices")
+        description.set("A libary to interpret nextbike tariffs and to calculate their prices.")
+        inceptionYear.set("2014")
+        url.set("https://github.com/meierjan/nxtb-tariff-interpreter")
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
@@ -79,28 +78,26 @@ mavenPublishing {
                 distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
-        url.set(repoUrl)
-        issueManagement {
-            system.set("Github")
-            url.set("${repoUrl}/issues")
-        }
-        scm {
-            connection.set("$repoUrl.git")
-            url.set(repoUrl)
-        }
         developers {
             developer {
+                id.set("meierjan")
                 name.set("Jan Meier")
-                email.set("jan@meier.wtf")
+                url.set("https://github.com/meierjan")
             }
+        }
+        scm {
+            url.set("https://github.com/meierjan")
+            connection.set("scm:git:git://github.com/meierjan/nxtb-tariff-interpreter.git")
+            developerConnection.set("scm:git:ssh://git@github.com/meierjan/nxtb-tariff-interpreter.git")
         }
     }
 }
-signing {
-    useInMemoryPgpKeys(
-        gradleLocalProperties(rootDir).getProperty("gpgKeySecret"),
-        gradleLocalProperties(rootDir).getProperty("gpgKeyPassword"),
 
-        )
-    sign(publishing.publications)
+
+nmcp {
+    publishAllPublications {
+        username = System.getenv("SONATYPE_USERNAME")
+        password = System.getenv("SONATYPE_PASSWORD")
+        publicationType = "USER_MANAGED"
+    }
 }
